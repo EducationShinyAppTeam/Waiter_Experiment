@@ -190,14 +190,13 @@ shinyServer(function(input, output, session) {
   
   #p-value (reactive variable)
   p.val = reactive({
-    pval = 1-pnorm(abs(z.stat()))
+    pval = 1-pnorm(abs(z.stat()),lower.tail = FALSE)
     rpval = round(pval, 4)
     
     #must use ifelse function rather than if and else statements to avoid logical input error
     ifelse(rpval == 0, "approximately 0", rpval)
   })
-  
-  
+    
   #render HTML; call avg.c()
   output$average.c = renderUI({
     HTML(paste0("The average tip for the 12 tables receiving candy in our sample is: ", tags$b(avg.c()), tags$b(" %"), "."))
