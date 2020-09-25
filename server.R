@@ -5,11 +5,14 @@ library(truncnorm)
 library(V8)
 
 jsResetCode <- "shinyjs.reset0 = function() {history.go(0)}"
+
 #disable actionButton function
 disableActionButton <- function(id,session) {
-  session$sendCustomMessage(type="jsCode",
-                            list(code= paste("$('#",id,"').prop('disabled',true)"
-                                             ,sep="")))
+  session$sendCustomMessage(
+    type="jsCode",
+    list(
+      code= paste("$('#",id,"').prop('disabled',true)",
+                  sep="")))
 }
 
 
@@ -22,7 +25,7 @@ shinyServer(function(input, output, session) {
   
   #move from Overview to Part 1
   observeEvent(input$go, {
-    updateTabItems(session, "tabs", "first")
+    updateTabItems(session, "tabs", "prereq")
   })
 
   #create reactive variables for the candy/no candy avg tip percentages
@@ -33,45 +36,30 @@ shinyServer(function(input, output, session) {
   #create a reactive variable accessible throughout the server: samp$sample (vector of 12 randomly selected numbers ranging from 1-24)
   #disable the Randomly Assign Button after the first time it is clicked
   samp = reactiveValues(sample = 0)
-  observeEvent(input$rand,({
-    samp$sample = sample(1:24, 12)
-    shinyjs::disable("rand")
-  }))
-  
-  ##########################################################NOT NECESSARY####################################################################  
-  #random assignment button: takes a sample of size 12 and assigns candy vs. no candy tables; disable button after pressed once
-  #observeEvent({input$rand} ,({
-  
-  #  for(i in 1:24){
-  #    if(i %in% samp$sample){
-  #      #val = rtruncnorm(n = 1, a = 0, b = 100, mean = avg.tip.c())
-  #      #updateTextInput(session, paste0("tabtip", i), value = as.character(round(val, 2)))
-  #      updateTextInput(session, paste0("tabtip", i), value = "")
-  
-  #    }
-  #    else{
-  #      #val = rtruncnorm(n = 1, a = 0, b = 100, mean = avg.tip.nc())
-  #      #updateTextInput(session, paste0("tabtip", i), value = as.character(round(val, 2)))
-  #      updateTextInput(session, paste0("tabtip", i), value = "")
-  #    }
-  
-  #  }
-  
-  #  shinyjs::disable("rand")
-  
-  #}))
-  #############################################################################################################################################  
-  
-  
+  observeEvent(
+    input$rand,({
+      samp$sample = sample(1:24, 12)
+      shinyjs::disable("rand")
+      })
+    )
+
   #when the slider is moved for average tip percentage of tables receiving candy, generate a percentage from rtruncnorm for each table in the sample
   #since avg.tip.c() is reactive, whenever 'mean' changes, 'val' will change, and thus updateTextInput will change, executing each time the mean tip percent for candy tables is changed
   observeEvent({input$avgtipc}, {
     for(i in samp$sample){
-      val = rtruncnorm(n = 1, a = 0, b = 100, mean = avg.tip.c(), sd = 1.75)
+      val = rtruncnorm(
+        n = 1, 
+        a = 0, 
+        b = 100, 
+        mean = avg.tip.c(), 
+        sd = 1.75)
       
       #only assign random values if the Randomly Assign button has been pressed (this stops random values being generated in the text boxes when the app first launches)
       if(input$rand != 0){
-        updateTextInput(session, paste0("tabtip", i), value = as.character(round(val, 2)))
+        updateTextInput(
+          session, 
+          paste0("tabtip", i), 
+          value = as.character(round(val, 2)))
       }
     }
     
@@ -81,20 +69,27 @@ shinyServer(function(input, output, session) {
   observeEvent({input$avgtipnc}, {
     for(i in 1:24){
       if(!(i %in% samp$sample)){
-        val = rtruncnorm(n = 1, a = 0, b = 100, mean = avg.tip.nc(), sd = 1.75)
+        val = rtruncnorm(
+          n = 1, 
+          a = 0, 
+          b = 100, 
+          mean = avg.tip.nc(), 
+          sd = 1.75)
         
         #only assign random values if the Randomly Assign button has been pressed (this stops random values being generated in the text boxes when the app first launches)
         if(input$rand != 0){
-          updateTextInput(session, paste0("tabtip", i), value = as.character(round(val, 2)))
+          updateTextInput(
+            session, paste0("tabtip", i), 
+            value = as.character(round(val, 2))
+          )
         }
       }
-    }
-    
-  })
+      }
+    })
   
   #reset button
-  observeEvent(input$reset_button,
-               {js$reset0()})
+  observeEvent(input$reset,
+               {shinyjs::reset("form")})
   
   
   
@@ -190,13 +185,14 @@ shinyServer(function(input, output, session) {
   
   #p-value (reactive variable)
   p.val = reactive({
-    pval = 1-pnorm(abs(z.stat()),lower.tail = FALSE)
+    pval = 1-pnorm(abs(z.stat()))
     rpval = round(pval, 4)
     
     #must use ifelse function rather than if and else statements to avoid logical input error
     ifelse(rpval == 0, "approximately 0", rpval)
   })
-    
+  
+  
   #render HTML; call avg.c()
   output$average.c = renderUI({
     HTML(paste0("The average tip for the 12 tables receiving candy in our sample is: ", tags$b(avg.c()), tags$b(" %"), "."))
@@ -227,217 +223,217 @@ shinyServer(function(input, output, session) {
   ####################################################
   output$img1 = renderUI({
     if(1 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img2 = renderUI({
     if(2 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img3 = renderUI({
     if(3 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img4 = renderUI({
     if(4 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img5 = renderUI({
     if(5 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img6 = renderUI({
     if(6 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img7 = renderUI({
     if(7 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img8 = renderUI({
     if(8 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img9 = renderUI({
     if(9 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img10 = renderUI({
     if(10 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img11 = renderUI({
     if(11 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img12 = renderUI({
     if(12 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img13 = renderUI({
     if(13 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img14 = renderUI({
     if(14 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img15 = renderUI({
     if(15 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img16 = renderUI({
     if(16 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img17 = renderUI({
     if(17 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img18 = renderUI({
     if(18 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img19 = renderUI({
     if(19 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img20 = renderUI({
     if(20 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img21 = renderUI({
     if(21 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img22 = renderUI({
     if(22 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img23 = renderUI({
     if(23 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   
   output$img24 = renderUI({
     if(24 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', width = 70, height = 60)
+      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', width = 70, height = 60)
+      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
     }
   })
   #################################################
@@ -503,29 +499,12 @@ shinyServer(function(input, output, session) {
   #split entire data frame into 5* blocks
   dflist = split(data, data$Block)
   
-  #choose a random block (of the 5*)
-  #This is weird**: We need to render all tables and p-value input dropdowns when the app first starts. (I don't want outputs to be rendered on some condition like pressing a button)
-  #                 The tables/p-value dropdowns will only be rendered if block (and order) are given values.
-  #                 If the condition does not evaluate to TRUE when the app first starts, no value for block (or order) will even be assigned.
-  #                 So, to get the condition to evaluate to TRUE by default (when the app first starts), we use the idea that (anything | TRUE) is always TRUE.
-  #                 Thus, we can get a value for block (and order) even though input$playagain has not been pressed.
-  #                 By using {input$playagain | TRUE}, block will recalculate only when the "playagain" button is pressed.
-  #
-  #                 Note that we cannot just merely use {TRUE} because we must establish a dependency on input$playagain for the recalculation of block.
-  #                 Also note that we cannot just merely use {input$playagain} because then no value for block (or order) will be assigned when the app first starts (and resultingly, no outputs will be rendered)
-  #
-  #                 We use ideas like this when we have reactive variables that need to change based on conditions (like the press of a button) other than user input values.
   block = eventReactive({input$playagain | TRUE},
                    {sample(1:(nrow(data)/4), 1)})
-  #we want sample(1:5, 1) for this case if there are 5* blocks
  
-  
-  #create a random order of the 4 questions in each block
-  #see the note above for why we use {input$playagain | TRUE}
   order = eventReactive({input$playagain | TRUE},
                         {sample(1:4)})
 
-  
   #function to create the matrix of effect size and sample size
   create.matrix = function(i){
     efsize = dflist[[block()]][order()[i], 3]
@@ -570,12 +549,6 @@ shinyServer(function(input, output, session) {
   output$choices4 = renderUI({
     selectInput(inputId = "menu4", label = "P-Value", choices = c("", dflist[[block()]][, 5]), selected = NULL)
   })
-  
-  #print(block())
-  #print(order())
-  #print(input$playagain)
-  #print(input$playagain)
-  
   
   ##Check Answers##
   
@@ -646,13 +619,6 @@ shinyServer(function(input, output, session) {
   
   #reactive vector that holds the 0/index values (qchoices$qvec holds the INPUT values)
   answers = reactive({c(check(1), check(2), check(3), check(4))})
-  
-  
-  ##TRACE STATEMENT##
-  # observeEvent(input$submit, {
-  #   print(answers())
-  # })
-  
 
   observeEvent(input$submit, {
     ###I think using the method below instead of the validate() function is better: this way we avoid a missing argument where TRUE/FALSE is needed error###
@@ -770,8 +736,6 @@ shinyServer(function(input, output, session) {
     shinyjs::hideElement("pic4")
   })
   
-  
-  
   #Render pic1
   #isolate the function so that it only recalculates (pictures are only re-rendered) when the submit button is pressed
   #if all questions have user input, then render the proper images, else don't render any images at all
@@ -834,142 +798,4 @@ shinyServer(function(input, output, session) {
       }
     )
   })
-  
- 
-  
-  # #The first way is probably better than this one
-  # #the tryCatch basically tries to perform the function inside {}, then returns "" (nothing) for the error
-  # #This way goes through SO many if/else statements to render the proper image for each possible combination of inputs
-  # output$pic1 = renderUI({
-  #   input$submit
-  #   isolate(
-  #     tryCatch({
-  # 
-  #     if(is.null(qchoices$qvec)){
-  #       tags$img(src = "white.png", width = 90)
-  #     }
-  #     else if(length(answers()) == 4 & answers()[1] == 0){
-  #       tags$img(src = "check.png", width = 90)
-  #     }
-  #     else if(length(answers()) == 4 & answers()[1] == 1){
-  #       tags$img(src = "x.png", width = 90)
-  #     }
-  #     else if(length(answers()) != 4 & input$menu1 == ""){
-  #       tags$img(src = "white.png", width = 90)
-  #       #may need to re-enable tryagain
-  #     }
-  #     else if(length(answers()) != 4 & input$menu1 != dflist[[block()]][order()[1], 5]){
-  #       tags$img(src = "white.png", width = 90)
-  #       #maybe change to white.png?
-  #     }
-  #     else if(length(answers()) != 4 & input$menu1 == dflist[[block()]][order()[1], 5] & input$tryagain != 0){
-  #       tags$img(src = "white.png", width = 90)
-  #     }
-  #     else if(length(answers()) != 4 & input$menu1 == dflist[[block()]][order()[1], 5]){
-  #       tags$img(src = "white.png", width = 90)
-  #     }
-  # 
-  #     }, error=function(e) return(""))
-  #   )
-  # })
-  # 
-  # output$pic2 = renderUI({
-  #   input$submit
-  #   isolate(
-  #     tryCatch({
-  # 
-  #     if(is.null(qchoices$qvec)){
-  #       tags$img(src = "white.png", width = 90)
-  #     }
-  #     else if(length(answers()) == 4 & answers()[2] == 0){
-  #       tags$img(src = "check.png", width = 90)
-  #     }
-  #     else if(length(answers()) == 4 & answers()[2] == 2){
-  #       tags$img(src = "x.png", width = 90)
-  #     }
-  #     else if(length(answers()) != 4 & input$menu2 == ""){
-  #       tags$img(src = "white.png", width = 90)
-  #       #may need to re-enable tryagain
-  #     }
-  #     else if(length(answers()) != 4 & input$menu2 != dflist[[block()]][order()[2], 5]){
-  #       tags$img(src = "white.png", width = 90)
-  #       #maybe change to white.png?
-  #     }
-  #     else if(length(answers()) != 4 & input$menu2 == dflist[[block()]][order()[2], 5] & input$tryagain != 0){
-  #       tags$img(src = "white.png", width = 90)
-  #     }
-  #     else if(length(answers()) != 4 & input$menu2 == dflist[[block()]][order()[2], 5]){
-  #       tags$img(src = "check.png", width = 90)
-  #     }
-  # 
-  #     }, error=function(e) return(""))
-  #   )
-  # })
-  # 
-  # output$pic3 = renderUI({
-  #   input$submit
-  #   isolate(
-  #     tryCatch({
-  # 
-  #     if(is.null(qchoices$qvec)){
-  #       tags$img(src = "white.png", width = 90)
-  #     }
-  #     else if(length(answers()) == 4 & answers()[3] == 0){
-  #       tags$img(src = "check.png", width = 90)
-  #     }
-  #     else if(length(answers()) == 4 & answers()[3] == 3){
-  #       tags$img(src = "x.png", width = 90)
-  #     }
-  #     else if(length(answers()) != 4 & input$menu3 == ""){
-  #       tags$img(src = "white.png", width = 90)
-  #       #may need to re-enable tryagain
-  #     }
-  #     else if(length(answers()) != 4 & input$menu3 != dflist[[block()]][order()[3], 5]){
-  #       tags$img(src = "white.png", width = 90)
-  #       #maybe change to white.png?
-  #     }
-  #     else if(length(answers()) != 4 & input$menu3 == dflist[[block()]][order()[3], 5] & input$tryagain != 0){
-  #       tags$img(src = "white.png", width = 90)
-  #     }
-  #     else if(length(answers()) != 4 & input$menu3 == dflist[[block()]][order()[3], 5]){
-  #       tags$img(src = "check.png", width = 90)
-  #     }
-  # 
-  #     }, error=function(e) return(""))
-  #   )
-  # })
-  # 
-  # output$pic4 = renderUI({
-  #   input$submit
-  #   isolate(
-  #     tryCatch({
-  # 
-  #     if(is.null(qchoices$qvec)){
-  #       tags$img(src = "white.png", width = 90)
-  #     }
-  #     else if(length(answers()) == 4 & answers()[4] == 0){
-  #       tags$img(src = "check.png", width = 90)
-  #     }
-  #     else if(length(answers()) == 4 & answers()[4] == 4){
-  #       tags$img(src = "x.png", width = 90)
-  #     }
-  #     else if(length(answers()) != 4 & input$menu4 == ""){
-  #       tags$img(src = "white.png", width = 90)
-  #       #may need to re-enable tryagain
-  #     }
-  #     else if(length(answers()) != 4 & input$menu4 != dflist[[block()]][order()[4], 5]){
-  #       tags$img(src = "white.png", width = 90)
-  #       #maybe change to white.png?
-  #     }
-  #     else if(length(answers()) != 4 & input$menu4 == dflist[[block()]][order()[4], 5] & input$tryagain != 0){
-  #       tags$img(src = "white.png", width = 90)
-  #     }
-  #     else if(length(answers()) != 4 & input$menu4 == dflist[[block()]][order()[4], 5]){
-  #       tags$img(src = "check.png", width = 90)
-  #     }
-  # 
-  #     }, error=function(e) return(""))
-  #   )
-  # })
-  
 })
