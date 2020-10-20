@@ -35,14 +35,20 @@ shinyUI(
       titleWidth = 250,
       tags$li(class = "dropdown",actionLink("info", icon("info"))),
       tags$li(class = "dropdown",
-        tags$a(href='https://shinyapps.science.psu.edu/', icon("home")))
+        tags$a(href='https://shinyapps.science.psu.edu/', icon("home"))),
+      tags$li(
+        class = "dropdown",
+        tags$a(target = "_blank", icon("comments"),
+               href = "https://pennstate.qualtrics.com/jfe/form/SV_7TLIkFtJEJ7fEPz?appName=[The Waiter Experiment]"
+        )
+      )
       ),
     
     #Create the sidebar
     dashboardSidebar(
       width = 250,
       sidebarMenu(
-        id = "tabs",
+        id = "pages",
         menuItem("Overview", tabName = "overview", icon = icon("tachometer-alt")),
         menuItem("Prerequisites", tabName = "prereq", icon = icon("book")),
         menuItem("Simulation", tabName = "first", icon = icon("wpexplorer")),
@@ -391,7 +397,7 @@ shinyUI(
         tabItem(
           tabName = "second",
           (tabsetPanel(
-            id = "tabs2",
+            id = "pages2",
             tabPanel(
               title = "P-value Calculators", 
               value = "detpval",

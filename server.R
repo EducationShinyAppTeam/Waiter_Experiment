@@ -20,12 +20,12 @@ shinyServer(function(input, output, session) {
   
   #move from Prerequisites to Overview
   observeEvent(input$next.page, {
-    updateTabItems(session, "tabs", "overview")
+    updateTabItems(session, "pages", "overview")
   })
   
   #move from Overview to Part 1
   observeEvent(input$go, {
-    updateTabItems(session, "tabs", "prereq")
+    updateTabItems(session, "pages", "prereq")
   })
 
   #create reactive variables for the candy/no candy avg tip percentages
@@ -482,7 +482,7 @@ shinyServer(function(input, output, session) {
   
   #move from Determining P-Values to Test Your Understanding
   observeEvent(input$totest, {
-    updateTabsetPanel(session, "tabs2", selected = "matching")
+    updateTabsetPanel(session, "pages2", selected = "matching")
   })
   
   #####################################################
