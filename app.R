@@ -7,6 +7,7 @@ library(V8)
 library(shinyBS)
 library(boastUtils)
 library(shinyjs)
+library(shinyWidgets)
 
 # App Meta Data----------------------------------------------------------------
 APP_TITLE  <<- "Waiter Experiment"
@@ -40,12 +41,14 @@ ui <- list(
       title = "The Waiter Experiment",
       titleWidth = 250,
       tags$li(class = "dropdown",actionLink("info", icon("info"))),
-      tags$li(class = "dropdown",
-              tags$a(href='https://shinyapps.science.psu.edu/', icon("home"))),
       tags$li(
         class = "dropdown",
-        tags$a(target = "_blank", icon("comments"),
-               href = "https://pennstate.qualtrics.com/jfe/form/SV_7TLIkFtJEJ7fEPz?appName=The_Waiter_Experiment"
+        boastUtils::surveyLink(name = "The_Waiter_Experiment")
+      ),
+      tags$li(
+        class = "dropdown",
+        tags$a(href = 'https://shinyapps.science.psu.edu/',
+               icon("home")
         )
       )
     ),
@@ -59,7 +62,10 @@ ui <- list(
         menuItem("Simulation", tabName = "first", icon = icon("wpexplorer")),
         menuItem("Determining P-Values", tabName = "second", icon = icon("gamepad")),
         menuItem("References", tabName = "refs", icon = icon("leanpub"))),
-      tags$div(class = "sidebar-logo", boastUtils::psu_eberly_logo("reversed"))
+      tags$div(
+        class = "sidebar-logo",
+        boastUtils::sidebarFooter()
+      )    
     ),
     #Body ----
     dashboardBody(
@@ -76,15 +82,19 @@ ui <- list(
             the average tip percentages for tables not receiving candy."),
           br(),
           h2("Instructions:"),
-          tags$li("Use the sliders to select a desired average tip percentage for tables receiving
-          candy and tables not receiving candy. Click Randomly Assign and move the sliders
-          to observe how the results change based on selected tip percent values. Is there
-          a difference in a waiter's average tip percentage depending on whether they give
-          a table candy or not? Each time the sliders are moved a new simulated sample is taken
-          for the group of tables involved and the test results are printed at the bottom."),
-          tags$li("The Determining P-values section of the app allows the user to see how the p-value changes
-          for different observed effect sizes and different sample sizes.
-          Finally, a quiz tests your knowledge of how effect size and sample size affect the p-value."),
+          tags$li("Use the sliders to select a desired average tip percentage for
+                  tables receiving candy and tables not receiving candy. Click 
+                  Randomly Assign and move the sliders to observe how the results
+                  change based on selected tip percent values. Is there a difference
+                  in a waiter's average tip percentage depending on whether they
+                  give a table candy or not? Each time the sliders are moved a 
+                  new simulated sample is taken for the group of tables involved
+                  and the test results are printed at the bottom."),
+          tags$li("The Determining P-values section of the app allows the user 
+                  to see how the p-value changes for different observed effect
+                  sizes and different sample sizes."), 
+          tags$li("Finally, a quiz tests your knowledge of how effect size and
+                  sample size affect the p-value."),
           div(style = "text-align: center",
               bsButton(
                 inputId = "go",
@@ -93,12 +103,14 @@ ui <- list(
                 size = "large")),
           br(),
           h2("Acknowledgements:"),
-          p("This application's the waiter experiment simulation was conceived and programmed by David Robinson
-            and then redesigned with the matching game added by Angela Ting. The latest version was modified by Gonghao Liu.",
+          p("This application's the waiter experiment simulation was conceived 
+            and programmed by David Robinson and then redesigned with the matching
+            game added by Angela Ting. The latest version was modified by Gonghao
+            Liu and Shravani Samala",
             br(),
             br(),
             br(),
-            div(class = "updated", "Last Update: 9/18/2020 by GL.")
+            div(class = "updated", "Last Update: 7/14/2021 by SJS.")
           )
         ),
         ### Prepreq Page ----
@@ -112,7 +124,7 @@ ui <- list(
                 title = strong("Two Sample T-Test"),
                 status = "primary",
                 collapsible = TRUE,
-                collapsed = TRUE,
+                collapsed = FALSE,
                 width = 12,
                 "A two sample t-test is a commonly used hypothesis test to determine
                 whether the average difference between two groups can be explained
@@ -125,7 +137,7 @@ ui <- list(
                 title = strong("Test Statistics & P-Values"),
                 status = "primary",
                 collapsible = TRUE,
-                collapsed = TRUE,
+                collapsed = FALSE,
                 width = 12,
                 "The test statistic involves the difference between group averages standardized by an estimate of the
                 standard deviation of the difference. The statistic is compared to a t distribution to determine the p-value
@@ -683,6 +695,18 @@ ui <- list(
 
 # Define the server ----
 server <- function(input, output, session) {
+  
+  #info button
+  observeEvent(input$info, {
+    sendSweetAlert(
+      session = session,
+      title = "Instructions:",
+      text = "This app demonstrates the reasoning of a two-sample t-test to
+      determine whether a waiter giving a table candy or not affects their
+      tip percentages.",
+      type = "info"
+    )
+  })
 
   #move from Prerequisites to Overview
   observeEvent(input$next.page, {
