@@ -98,8 +98,8 @@ ui <- list(
           div(style = "text-align: center",
               bsButton(
                 inputId = "go",
-                label = "Explore",
-                icon = icon("bolt"),
+                label = "Prerequisites!",
+                icon = icon("book"),
                 size = "large")),
           br(),
           h2("Acknowledgements:"),
@@ -126,12 +126,12 @@ ui <- list(
                 collapsible = TRUE,
                 collapsed = FALSE,
                 width = 12,
-                "A two sample t-test is a commonly used hypothesis test to determine
+                p("A two sample t-test is a commonly used hypothesis test to determine
                 whether the average difference between two groups can be explained
                 by random chance when the data arise from normally distributed populations.
                 Two sample t-tests can help answer a question like whether the test results of
                 patients who received a drug are significantly better than test results of those who received a placebo,
-                or whether any observed difference can be explained by chance."),
+                or whether any observed difference can be explained by chance.")),
               withMathJax(),
               box(
                 title = strong("Test Statistics & P-Values"),
@@ -139,19 +139,20 @@ ui <- list(
                 collapsible = TRUE,
                 collapsed = FALSE,
                 width = 12,
-                "The test statistic involves the difference between group averages standardized by an estimate of the
+                p("The test statistic involves the difference between group averages standardized by an estimate of the
                 standard deviation of the difference. The statistic is compared to a t distribution to determine the p-value
                 (degrees of freedom = \\(n_{grp1}+n_{grp2} – 2\\)).
                 The p-value represents the probability of obtaining a difference at least as extreme as
                 the one in your sample data. Thus, a large p-value indicates the null hypothesis of no difference in means
                 provides a reasonable explanation of the data. Small p-values (typically taken to be below 0.05)
-                indicate the null hypothesis is a poor explanation of the data.")
+                indicate the null hypothesis is a poor explanation of the data."))
             )
           )
         ),
         ##Waiter's Experiment Page ----
         tabItem(
           tabName = "first",
+          h2("Waiter Simulation"), 
           fluidRow(
             column(
               width = 4,
@@ -186,7 +187,9 @@ ui <- list(
                   min = 0,
                   max = 25,
                   value = 0),
-                actionButton("reset", "Reset")
+                actionButton(
+                  inputId = "reset", 
+                  label = "Reset")
               )
             ),
             column(
@@ -413,7 +416,8 @@ ui <- list(
         ### Game Page ----
         tabItem(
           tabName = "second",
-          (tabsetPanel(
+          h2("Determining P-Values"), 
+          tabsetPanel(
             id = "pages2",
             tabPanel(
               title = "P-value Calculators",
@@ -647,7 +651,7 @@ ui <- list(
               )
             )
           )
-          )
+          
         ),
         #Reference Page ----
         tabItem(

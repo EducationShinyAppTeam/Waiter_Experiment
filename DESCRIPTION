@@ -1,0 +1,20 @@
+Title: Probability Applications
+ShortName: Probability Applications
+Date: 2020-12-08
+Lifecycle: experimental
+Authors@R: c(
+    person(given = "David", family = "Robinson", role = c("aut", "cre")),
+    person(given = "Angela", family = "Ting", role = c("aut")), 
+    person(given = "Gonghao", family = "Liu", role = c("ctb")), 
+    person(given = "Shravani", family = "Samala", email = "sjs7049@psu.edu", role = c("ctb"))
+  )
+Chapter: Statistical Inference
+Description: This app demonstrates the reasoning of a two-sample t-test to determine whether a waiter giving a table candy or not affects their tip percentages.
+LearningObjectives: c(
+  "Demonstrate how two-sample t-test work by setting up an example problem")
+DisplayMode: Normal
+URL: https://psu-eberly.shinyapps.io/Waiter_Experiment
+BugReports: https://github.com/EducationShinyAppTeam/Waiter_Experiment/issues
+License: CC-BY-NC-SA-4.0
+Tags: game
+Type: Shiny
