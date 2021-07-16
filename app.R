@@ -12,11 +12,14 @@ library(shinyWidgets)
 # App Meta Data----------------------------------------------------------------
 APP_TITLE  <<- "Waiter Experiment"
 APP_DESCP  <<- paste(
-  "This app will let students making use of general t-test to slove a problem of waiter's tip",
-  "First, students need to review the concept of 'Two Sample T-Test' and 'Test Statistics & P-Values',
+  "This app will let students making use of general t-test to slove a problem of
+    waiter's tip",
+  "First, students need to review the concept of 'Two Sample T-Test' and 'Test
+    Statistics & P-Values',
    which we will use in the following exploration and game",
   "Second, students can use the game of waiter's tips to conduct a general t-test",
-  "Third, students need to finish two games: 'p-value calculator' and 'matching games' to strength what they learned from this app"
+  "Third, students need to finish two games: 'p-value calculator' and 'matching
+    games' to strength what they learned from this app"
 )
 # End App Meta Data------------------------------------------------------------
 
@@ -26,10 +29,10 @@ jsResetCode <- "shinyjs.reset0 = function() {history.go(0)}"
 #disable actionButton function
 disableActionButton <- function(id,session) {
   session$sendCustomMessage(
-    type="jsCode",
+    type = "jsCode",
     list(
-      code= paste("$('#",id,"').prop('disabled',true)",
-                  sep="")))
+      code =  paste("$('#",id,"').prop('disabled',true)",
+                  sep = "")))
 }
 
 # Define the UI ----
@@ -95,6 +98,7 @@ ui <- list(
                   sizes and different sample sizes."), 
           tags$li("Finally, a quiz tests your knowledge of how effect size and
                   sample size affect the p-value."),
+          br(), 
           div(style = "text-align: center",
               bsButton(
                 inputId = "go",
@@ -126,12 +130,14 @@ ui <- list(
                 collapsible = TRUE,
                 collapsed = FALSE,
                 width = 12,
-                p("A two sample t-test is a commonly used hypothesis test to determine
-                whether the average difference between two groups can be explained
-                by random chance when the data arise from normally distributed populations.
-                Two sample t-tests can help answer a question like whether the test results of
-                patients who received a drug are significantly better than test results of those who received a placebo,
-                or whether any observed difference can be explained by chance.")),
+                p("A two sample t-test is a commonly used hypothesis test to
+                  determine whether the average difference between two groups
+                  can be explained by random chance when the data arise from
+                  normally distributed populations. Two sample t-tests can help
+                  answer a question like whether the test results of patients who
+                  received a drug are significantly better than test results of
+                  those who received a placebo, or whether any observed difference
+                  can be explained by chance.")),
               withMathJax(),
               box(
                 title = strong("Test Statistics & P-Values"),
@@ -139,13 +145,15 @@ ui <- list(
                 collapsible = TRUE,
                 collapsed = FALSE,
                 width = 12,
-                p("The test statistic involves the difference between group averages standardized by an estimate of the
-                standard deviation of the difference. The statistic is compared to a t distribution to determine the p-value
-                (degrees of freedom = \\(n_{grp1}+n_{grp2} – 2\\)).
-                The p-value represents the probability of obtaining a difference at least as extreme as
-                the one in your sample data. Thus, a large p-value indicates the null hypothesis of no difference in means
-                provides a reasonable explanation of the data. Small p-values (typically taken to be below 0.05)
-                indicate the null hypothesis is a poor explanation of the data."))
+                p("The test statistic involves the difference between group averages
+                  standardized by an estimate of the standard deviation of the
+                  (degrees of freedom = \\(n_{grp1}+n_{grp2} – 2\\)). The p-value
+                  represents the probability of obtaining a difference at least
+                  as extreme as the one in your sample data. Thus, a large p-value
+                  indicates the null hypothesis of no difference in means provides
+                  a reasonable explanation of the data. Small p-values (typically
+                  taken to be below 0.05) indicate the null hypothesis is a poor
+                  explanation of the data."))
             )
           )
         ),
@@ -156,12 +164,12 @@ ui <- list(
           fluidRow(
             column(
               width = 4,
-              "A study published in the Journal of Applied Social Psychology claims that
-                          giving candy to customers can increase a waiter's tip by about 23%.",
+              p("A study published in the Journal of Applied Social Psychology
+                claims that giving candy to customers can increase a waiter's
+                tip by about 23%."),
               br(),
-              br(),
-              "Click below to randomly assign which tables receive candy.",
-              br(),
+              p("Click below to randomly assign which tables receive candy and 
+                check below the sliders for the test hypotheses and test values."),
               br(),
               shinyjs::useShinyjs(),
               div(
@@ -177,13 +185,15 @@ ui <- list(
                 br(),
                 sliderInput(
                   inputId = "avgtipc",
-                  label = "Enter an average tip percentage for tables assigned to receive candy.",
+                  label = "Enter an average tip percentage for tables assigned
+                          to receive candy.",
                   min = 0,
                   max = 50,
                   value = 0),
                 sliderInput(
                   inputId = "avgtipnc",
-                  label = "Enter an average tip percentage for tables assigned to receive no candy.",
+                  label = "Enter an average tip percentage for tables assigned
+                          to receive no candy.",
                   min = 0,
                   max = 25,
                   value = 0),
@@ -379,25 +389,26 @@ ui <- list(
           fluidRow(
             column(
               width = 8,
-              offset = 1,
+              offset = 2,
               wellPanel(
-                h2(tags$b("Test Hypotheses:")),
+                h2("Test Hypotheses:"),
                 br(),
-                HTML(paste(tags$b("H", tags$sub(0)),
-                           ": Giving customers candy does not affect the waiter's tip percentage")),
+                HTML(paste("H", tags$sub(0),
+                           ": Giving customers candy does not affect the waiter's
+                           tip percentage")),
                 br(),
-                "(Candy Tip = No Candy Tip)",
+                p("(Candy Tip = No Candy Tip)"),
                 br(),
+                HTML(paste("H", tags$sub(1),
+                           ": Giving customers candy does affect the waiter's tip
+                           percentage")),
                 br(),
-                HTML(paste(tags$b("H", tags$sub(1)),
-                           ": Giving customers candy does affect the waiter's tip percentage")),
-                br(),
-                "(Candy Tip > No Candy Tip)"
+                p("(Candy Tip > No Candy Tip)")
               ),
               conditionalPanel(
                 condition = "input.rand",
                 wellPanel(
-                  h2(tags$b("Test Values:")),
+                  h2("Test Values:"),
                   br(),
                   htmlOutput("average.c"),
                   br(),
@@ -417,49 +428,26 @@ ui <- list(
         tabItem(
           tabName = "second",
           h2("Determining P-Values"), 
+          br(), 
           tabsetPanel(
             id = "pages2",
             tabPanel(
               title = "P-value Calculators",
               value = "detpval",
+              
+              br(), 
+              h2("How do effect size and sample size affect the p-value?"),
+              br(), 
+              tags$ul(
+                tags$li("Move the sliders for effect size and sample size to see how
+                   changes in each affect the p-value."),
+                tags$li("Observe whether researchers are more or less likely to
+                   detect a difference in average tip percentage when you change
+                   the effect size and sample size."),
+              ), 
               fluidRow(
                 column(
-                  width = 10,
-                  h2(tags$b("How do effect size and sample size affect the p-value?")),
-                  br()
-                )
-              ),
-              fluidRow(
-                column(
-                  offset = 1,
-                  width = 10,
-                  box(
-                    width = 7,
-                    background = "purple",
-                    h3(tags$b("Test Hypotheses:")),
-                    br(),
-                    HTML(paste(tags$b("H", tags$sub(0)),
-                               ": Giving customers candy does not affect the waiter's tip percentage.")),
-                    br(),
-                    "(Candy Tip = No Candy Tip)",
-                    br(),
-                    br(),
-                    HTML(paste(tags$b("H", tags$sub(1)),
-                               ": Giving customers candy does affect the waiter's tip percentage.")),
-                    br(),
-                    "(Candy Tip > No Candy Tip)",
-                    br(),
-                    br()
-                  )
-                )
-              ),
-              fluidRow(
-                column(
-                  offset = 1,
-                  width = 10,
-                  h4(tags$b("Move the sliders for effect size and sample size to see how changes in each affect the p-value.")),
-                  h4(tags$b("Observe whether researchers are more or less likely to detect a difference in average tip percentage
-                            when you change the effect size and sample size.")),
+                  width = 6,
                   br(),
                   sliderInput(
                     inputId = "ef_size",
@@ -476,48 +464,77 @@ ui <- list(
                     value = 10,
                     width = 600),
                   br(),
-                  tags$head(tags$style("#pvalue{color: white; font-size: 30px; font-style: bold;")),
+                  br()
+                ), 
+                column(
+                  width = 6,
                   box(
-                    width = 8,
+                    width = 12,
+                    background = "purple",
+                    h3("Test Hypotheses:"),
+                    br(),
+                    HTML(paste("H", tags$sub(0),
+                               ": Giving customers candy does not affect the
+                               waiter's tip percentage.")),
+                    br(),
+                    "(Candy Tip = No Candy Tip)",
+                    br(),
+                    br(),
+                    HTML(paste("H", tags$sub(1),
+                               ": Giving customers candy does affect the waiter's
+                               tip percentage.")),
+                    br(),
+                    "(Candy Tip > No Candy Tip)",
+                    br(),
+                    br()
+                  )
+                )
+              ), 
+              fluidRow(
+                column(
+                  offset = 6, 
+                  width = 6,
+                  br(),
+                  tags$head(tags$style("#pvalue{color: white; font-size: 20px")),
+                  box(
+                    width = 12,
                     background = "purple",
                     htmlOutput("pvalue")),
                   br()
                 )
-              ),
+              ), 
               fluidRow(
                 column(
                   width = 12,
-                  offset = 9,
                   br(),
                   br(),
+                  style = "text-align: center",
                   bsButton(
                     inputId = "totest",
                     label = "Test Your Understanding",
                     icon = icon("bolt"),
-                    size = "medium")
+                    size = "large", 
+                    style = "default")
                 )
               )
             ),
             tabPanel(
               title = "Matching Game",
               value = "matching",
-              fluidRow(
-                fluidRow(
-                  column(
-                    12,
-                    h2(tags$b("Test Your Understanding:")),
-                    br(),
-                    h4("Match the appropriate p-values to each question according to the effect size and sample size.
-                       Try to do this without doing any calculations using the P-value calculator"),
-                    br()
-                  )
-                ),
+              br(), 
+              h2("Test Your Understanding:"),
+              br(),
+              p("Match the appropriate p-values to each question according
+                       to the effect size and sample size. Try to do this without
+                       doing any calculations using the P-value calculator"),
+              br(), 
+              
 
                 #Question 1
                 box(
                   width = 10,
-                  style = "color: #000000; background-color: #b6d0df",
-                  background = "blue",
+                  # style = "color: #000000; background-color: #b6d0df",
+                  # background = "blue",
                   fluidRow(
                     column(
                       width = 6,
@@ -544,8 +561,8 @@ ui <- list(
                 #Question 2
                 box(
                   width = 10,
-                  style = "color: #000000; background-color: #dae1e5",
-                  background = "blue",
+                  # style = "color: #000000; background-color: #dae1e5",
+                  # background = "white",
                   fluidRow(
                     column(
                       width = 6,
@@ -572,7 +589,7 @@ ui <- list(
                 #Question 3
                 box(
                   width = 10,
-                  style = "color: #000000; background-color: #b6d0df", background = "blue",
+                  # style = "color: #000000; background-color: #b6d0df", background = "gray",
                   fluidRow(
                     column(
                       width = 6,
@@ -599,8 +616,8 @@ ui <- list(
                 #Question 4
                 box(
                   width = 10,
-                  style = "color: #000000; background-color: #dae1e5",
-                  background = "blue",
+                  # style = "color: #000000; background-color: #dae1e5",
+                  # background = "white",
                   fluidRow(
                     column(
                       width = 6,
@@ -632,9 +649,9 @@ ui <- list(
                     offset = 4,
                     actionButton(
                       inputId = "submit",
-                      HTML(paste(tags$b("Submit"))),
-                      style = "color: #fff; background-color: #1E407C;",
-                      width = 200),
+                      HTML(paste("Submit")),
+                      style = "default",
+                      size = "large"),
                     br(),
                     br(),
                     uiOutput("feedback"),
@@ -643,16 +660,16 @@ ui <- list(
                     br(),
                     actionButton(
                       inputId = "playagain",
-                      HTML(paste(tags$b("Play Again"))),
-                      style = "color: #fff; background-color: #1E407C;",
-                      width = 200)
+                      HTML(paste("Play Again")),
+                      style = "default",
+                      size = "large")
                   )
                 )
               )
             )
-          )
+          ), 
           
-        ),
+        
         #Reference Page ----
         tabItem(
           tabName = "refs",
@@ -690,7 +707,11 @@ ui <- list(
             class = "hangingindent",
             "Jeroen Ooms (2020). V8: Embedded JavaScript and WebAssembly Engine for R.
             R package version 3.2.0.https://CRAN.R-project.org/package=V8"
-          )
+          ), 
+          br(),
+          br(),
+          br(),
+          boastUtils::copyrightInfo()
         )
       )
     )
@@ -727,7 +748,8 @@ server <- function(input, output, session) {
   avg.tip.nc = reactive({(input$avgtipnc)})
 
   #select 12 random tables to receive candy
-  #create a reactive variable accessible throughout the server: samp$sample (vector of 12 randomly selected numbers ranging from 1-24)
+  #create a reactive variable accessible throughout the server: samp$sample
+    #(vector of 12 randomly selected numbers ranging from 1-24)
   #disable the Randomly Assign Button after the first time it is clicked
   samp = reactiveValues(sample = 0)
   observeEvent(
@@ -737,10 +759,13 @@ server <- function(input, output, session) {
     })
   )
 
-  #when the slider is moved for average tip percentage of tables receiving candy, generate a percentage from rtruncnorm for each table in the sample
-  #since avg.tip.c() is reactive, whenever 'mean' changes, 'val' will change, and thus updateTextInput will change, executing each time the mean tip percent for candy tables is changed
+  #when the slider is moved for average tip percentage of tables receiving candy,
+    #generate a percentage from rtruncnorm for each table in the sample
+  #since avg.tip.c() is reactive, whenever 'mean' changes, 'val' will change,
+    #and thus updateTextInput will change, executing each time the mean tip
+    #percent for candy tables is changed
   observeEvent({input$avgtipc}, {
-    for(i in samp$sample){
+    for (i in samp$sample) {
       val = rtruncnorm(
         n = 1,
         a = 0,
@@ -748,8 +773,10 @@ server <- function(input, output, session) {
         mean = avg.tip.c(),
         sd = 1.75)
 
-      #only assign random values if the Randomly Assign button has been pressed (this stops random values being generated in the text boxes when the app first launches)
-      if(input$rand != 0){
+      #only assign random values if the Randomly Assign button has been pressed
+        #(this stops random values being generated in the text boxes when the
+        #app first launches)
+      if (input$rand != 0) {
         updateTextInput(
           session,
           paste0("tabtip", i),
@@ -759,10 +786,11 @@ server <- function(input, output, session) {
 
   })
 
-  #when the slider is moved for average tip percentage of tables receiving not candy, generate a percentage from rtruncnorm for each table NOT in the sample
+  #when the slider is moved for average tip percentage of tables receiving not
+    #candy, generate a percentage from rtruncnorm for each table NOT in the sample
   observeEvent({input$avgtipnc}, {
-    for(i in 1:24){
-      if(!(i %in% samp$sample)){
+    for (i in 1:24) {
+      if (!(i %in% samp$sample)) {
         val = rtruncnorm(
           n = 1,
           a = 0,
@@ -770,8 +798,10 @@ server <- function(input, output, session) {
           mean = avg.tip.nc(),
           sd = 1.75)
 
-        #only assign random values if the Randomly Assign button has been pressed (this stops random values being generated in the text boxes when the app first launches)
-        if(input$rand != 0){
+        #only assign random values if the Randomly Assign button has been pressed
+          #(this stops random values being generated in the text boxes when the
+          #app first launches)
+        if (input$rand != 0) {
           updateTextInput(
             session, paste0("tabtip", i),
             value = as.character(round(val, 2))
@@ -823,8 +853,8 @@ server <- function(input, output, session) {
   #average tip percent for tables receiving candy (reactive variable)
   avg.c = reactive({
     sum.c = 0
-    for(i in 1:24){
-      if(i %in% samp$sample){
+    for (i in 1:24) {
+      if (i %in% samp$sample) {
         sum.c = sum.c + tips$tip.list[i]
       }
     }
@@ -834,8 +864,8 @@ server <- function(input, output, session) {
   #average tip percent for tables not receiving candy (reactive variable)
   avg.nc = reactive({
     sum.nc = 0
-    for(i in 1:24){
-      if(!(i %in% samp$sample)){
+    for (i in 1:24) {
+      if (!(i %in% samp$sample)) {
         sum.nc = sum.nc + tips$tip.list[i]
       }
     }
@@ -851,8 +881,8 @@ server <- function(input, output, session) {
   #standard deviation of tips for tables with candy (reactive variable)
   sd.c = reactive({
     vec.c = c()
-    for(i in 1:24){
-      if(i %in% samp$sample){
+    for (i in 1:24) {
+      if (i %in% samp$sample) {
         vec.c = c(vec.c, tips$tip.list[i])
       }
     }
@@ -862,8 +892,8 @@ server <- function(input, output, session) {
   #standard deviation of tips for tables without candy (reactive variable)
   sd.nc = reactive({
     vec.nc = c()
-    for(i in 1:24){
-      if(!(i %in% samp$sample)){
+    for (i in 1:24) {
+      if (!(i %in% samp$sample)) {
         vec.nc = c(vec.nc, tips$tip.list[i])
       }
     }
@@ -879,265 +909,459 @@ server <- function(input, output, session) {
 
   #p-value (reactive variable)
   p.val = reactive({
-    pval = 1-pnorm(abs(z.stat()))
+    pval = 1 - pnorm(abs(z.stat()))
     rpval = round(pval, 4)
 
-    #must use ifelse function rather than if and else statements to avoid logical input error
+    #must use ifelse function rather than if and else statements to avoid logical
+      #input error
     ifelse(rpval == 0, "approximately 0", rpval)
   })
 
 
   #render HTML; call avg.c()
   output$average.c = renderUI({
-    HTML(paste0("The average tip for the 12 tables receiving candy in our sample is: ", tags$b(avg.c()), tags$b(" %"), "."))
+    HTML(paste0("The average tip for the 12 tables receiving candy in our sample is: ",
+                tags$b(avg.c()),
+                tags$b(" %"), "."))
   })
 
   #render HTML, call avg.nc()
   output$average.nc = renderUI({
-    HTML(paste0("The average tip for the 12 tables not receiving candy in our sample is: ", tags$b(avg.nc()), tags$b(" %"),"."))
+    HTML(paste0("The average tip for the 12 tables not receiving candy in our sample is: ",
+                tags$b(avg.nc()),
+                tags$b(" %"),"."))
   })
 
   #render HTML, call effect()
   output$effect.size = renderUI({
-    HTML(paste0("The effect size is: ", tags$b(avg.c()), tags$b(" % - "), tags$b(avg.nc()), tags$b(" % = "), tags$b(effect()), tags$b( " %"), "."))
+    HTML(paste0("The effect size is: ",
+                tags$b(avg.c()), tags$b(" % - "),
+                tags$b(avg.nc()), tags$b(" % = "),
+                tags$b(effect()), tags$b( " %"), "."))
   })
 
   #render HTML, call test.stat()
   output$test.stat = renderUI({
-    HTML(paste0("The test statistic is: ", tags$b("T = "), tags$b(z.stat()), "."))
+    HTML(paste0("The test statistic is: ",
+                tags$b("T = "),
+                tags$b(z.stat()), "."))
   })
 
   #render HTML, call p.val()
   output$p_value = renderUI({
-    HTML(paste0("The p-value is: ", tags$b(p.val()), "."))
+    HTML(paste0("The p-value is: ",
+                tags$b(p.val()), "."))
   })
 
   ####################################################
   #           For rendering the 24 images            #
   ####################################################
   output$img1 = renderUI({
-    if(1 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (1 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img2 = renderUI({
-    if(2 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (2 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img3 = renderUI({
-    if(3 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (3 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img4 = renderUI({
-    if(4 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (4 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img5 = renderUI({
-    if(5 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (5 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img6 = renderUI({
-    if(6 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (6 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img7 = renderUI({
-    if(7 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (7 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img8 = renderUI({
-    if(8 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (8 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img9 = renderUI({
-    if(9 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (9 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img10 = renderUI({
-    if(10 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (10 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img11 = renderUI({
-    if(11 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (11 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img12 = renderUI({
-    if(12 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (12 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img13 = renderUI({
-    if(13 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (13 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img14 = renderUI({
-    if(14 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (14 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70, height = 60)
     }
   })
 
   output$img15 = renderUI({
-    if(15 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (15 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img16 = renderUI({
-    if(16 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (16 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img17 = renderUI({
-    if(17 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (17 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img18 = renderUI({
-    if(18 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (18 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img19 = renderUI({
-    if(19 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (19 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img20 = renderUI({
-    if(20 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (20 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img21 = renderUI({
-    if(21 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (21 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70, height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img22 = renderUI({
-    if(22 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (22 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img23 = renderUI({
-    if(23 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (23 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
 
   output$img24 = renderUI({
-    if(24 %in% samp$sample){
-      tags$img(src = 'tablecandy.PNG', alt = "A table without candy", width = 70, height = 60)
+    if (24 %in% samp$sample) {
+      tags$img(
+        src = 'tablecandy.PNG',
+        alt = "A table without candy",
+        width = 70,
+        height = 60)
     }
     else{
-      tags$img(src = 'dinnerTable.jpg', alt = "A table with candy", width = 70, height = 60)
+      tags$img(
+        src = 'dinnerTable.jpg',
+        alt = "A table with candy",
+        width = 70,
+        height = 60)
     }
   })
-  #################################################
-
-
-
-  #####################################################
   ##################P-VALUE TAB########################
-  #####################################################
-
   #effect size (reactive variable)
   esize = reactive({input$ef_size})
 
@@ -1155,14 +1379,15 @@ server <- function(input, output, session) {
   })
 
   #p-value (reactive variable)
-  #note: could have passed this to "p.val" but we will create a new reactive p-value variable for clarity
+  #note: could have passed this to "p.val" but we will create a new reactive
+    #p-value variable for clarity
   pval = reactive({
     #I actually invalidated this condition in the UI by starting the sample size at 10
-    if((esize() == 0) | (sampsize() == 0)){
+    if ((esize() == 0) | (sampsize() == 0)) {
       return("0.5")
     }
     else{
-      pval = 1-pnorm(abs(zstat()))
+      pval = 1 - pnorm(abs(zstat()))
       rpval = round(pval, 4)
       return(ifelse(rpval == 0, "approximately 0", rpval))
     }
@@ -1171,7 +1396,7 @@ server <- function(input, output, session) {
 
   #render HTML; call pval()
   output$pvalue = renderUI({
-    HTML(paste0("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The p-value is: ", tags$b(pval()), "."))
+    HTML(paste0("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The p-value is: ", pval(), "."))
   })
 
   #move from Determining P-Values to Test Your Understanding
@@ -1179,9 +1404,7 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, "pages2", selected = "matching")
   })
 
-  #####################################################
   ##################MATCHING TAB#######################
-  #####################################################
 
   #the Play Again button should be hidden when the app is first launched
   shinyjs::hideElement("playagain")
@@ -1226,28 +1449,43 @@ server <- function(input, output, session) {
   })
 
 
-  #note: each choices variable shows p-values from least to greatest (as formatted in csv file)
-  #concatenate an empty string to choices so it is possible to use NULL as the default value
+  #note: each choices variable shows p-values from least to greatest (as formatted
+    #in csv file)
+  #concatenate an empty string to choices so it is possible to use NULL as the
+    #default value
   output$choices1 = renderUI({
-    selectInput(inputId = "menu1", label = "P-Value", choices = c("", dflist[[block()]][, 5]), selected = NULL)
+    selectInput(
+      inputId = "menu1",
+      label = "P-Value",
+      choices = c("", dflist[[block()]][, 5]), selected = NULL)
   })
 
   output$choices2 = renderUI({
-    selectInput(inputId = "menu2", label = "P-Value", choices = c("", dflist[[block()]][, 5]), selected = NULL)
+    selectInput(
+      inputId = "menu2",
+      label = "P-Value",
+      choices = c("", dflist[[block()]][, 5]), selected = NULL)
   })
 
   output$choices3 = renderUI({
-    selectInput(inputId = "menu3", label = "P-Value", choices = c("", dflist[[block()]][, 5]), selected = NULL)
+    selectInput(
+      inputId = "menu3",
+      label = "P-Value",
+      choices = c("", dflist[[block()]][, 5]), selected = NULL)
   })
 
   output$choices4 = renderUI({
-    selectInput(inputId = "menu4", label = "P-Value", choices = c("", dflist[[block()]][, 5]), selected = NULL)
+    selectInput(
+      inputId = "menu4",
+      label = "P-Value",
+      choices = c("", dflist[[block()]][, 5]), selected = NULL)
   })
 
   ##Check Answers##
 
   #qchoices is a vector of the current input value for each question
-  #I probably should have just used a plain reactive variable instead: qchoices = reactive({c(input$menu1, input$menu2, input$menu3, input$menu4)})
+  #I probably should have just used a plain reactive variable instead: qchoices =
+    #reactive({c(input$menu1, input$menu2, input$menu3, input$menu4)})
   qchoices = reactiveValues(qvec = c())
 
   observe({
@@ -1257,35 +1495,21 @@ server <- function(input, output, session) {
     qchoices$qvec[4] = input$menu4
   })
 
-  #function to check answer for each question
-  #note: the redundant (!is.null) and (!= "") is necessary because a NULL value used with logical operators produces an argument of length 0 (error)
-  #      if(!is.null(qchoices$qvec[i])){} ensures that an argument of length 0 is not passed to the != or == logical operator (ignores empty default input value; ensures it does not get passed through other functions but does not get rid of)
-  #      if(qchoices$qvec[i] != ""){} ensures that the empty default input value does not get assigned a value in the summing process
-
-  #NOTE: This is an example full function that is written for checking the correct p-value of Question 1
-  # check = function(){
-  #   if(!is.null(input$menu1)){
-  #     if(input$menu1 == as.character(dflist[[block]][order[1], 5])){
-  #       "CORRECT"
-  #     }
-  #     else{
-  #       if(input$menu1 != ""){
-  #         "INCORRECT"
-  #       }
-  #     }
-  #   }
-  # }
   check = function(i){
-    if(!is.null(qchoices$qvec[i])){
-      if(qchoices$qvec[i] == dflist[[block()]][order()[i], 5]){
+    if (!is.null(qchoices$qvec[i])) {
+      if (qchoices$qvec[i] == dflist[[block()]][order()[i], 5]) {
         #CORRECT answer
-        #return a neutral 0; we will later take a sum; 0 will not affect a sum; we only perform the upcoming action if the sum is nonzero (at least one incorrect answer)
+        #return a neutral 0; we will later take a sum; 0 will not affect a sum;
+          #we only perform the upcoming action if the sum is nonzero (at least one
+          #incorrect answer)
         return(0)
       }
       else{
-        if(qchoices$qvec[i] != ""){
+        if (qchoices$qvec[i] != "") {
           #INCORRECT answer
-          #return the index (aka question #) so we have a way to know which questions were answered incorrectly; incorrect return values will later be concatenated into a vector
+          #return the index (aka question #) so we have a way to know which questions
+            #were answered incorrectly; incorrect return values will later be
+            #concatenated into a vector
           return(i)
         }
       }
@@ -1315,28 +1539,28 @@ server <- function(input, output, session) {
   answers = reactive({c(check(1), check(2), check(3), check(4))})
 
   observeEvent(input$submit, {
-    ###I think using the method below instead of the validate() function is better: this way we avoid a missing argument where TRUE/FALSE is needed error###
-    # output$feedback = renderUI({
-    #   validate(need(input$menu1 != "" & input$menu2 != "" & input$menu3 != "" & input$menu4 != "", message = "Please select a p-value for each question."))
-    # })
-
-    #check if there are null values in the answers() vector (the user did not select a p-value for each question)
+    #check if there are null values in the answers() vector (the user did not
+      #select a p-value for each question)
     #we check this by seeing if the length of answers() is 4
-    #if there are indeed unselected p-values, then answers() would concatenate NULL values to the vector (which is basically concatenating nothing); the length would not be 4
+    #if there are indeed unselected p-values, then answers() would concatenate
+      #NULL values to the vector (which is basically concatenating nothing);
+      #the length would not be 4
 
     nullvals = FALSE
-    if(length(answers()) != 4){
+    if (length(answers()) != 4) {
       nullvals = TRUE
     }
 
     #CASE 1: The user did not select a p-value for each question
-    if(nullvals == TRUE){
+    if (nullvals == TRUE) {
       output$feedback = renderUI({
         "Please select a p-value for each question."
       })
     }
-    #CASE 2: All answers are correct (We don't need to worry that sum(answers()) == 0 is a vector of all NULL values because the previous if statement already invalidates that possibility)
-    else if(sum(answers()) == 0){
+    #CASE 2: All answers are correct (We don't need to worry that sum(answers())
+      #== 0 is a vector of all NULL values because the previous if statement already
+      #invalidates that possibility)
+    else if (sum(answers()) == 0) {
       output$feedback = renderUI({
         "CORRECT"
       })
@@ -1346,35 +1570,41 @@ server <- function(input, output, session) {
       shinyjs::hideElement("tryagain")
     }
     #CASE 3: There is at least one incorrect answer
-    else if (sum(answers()) != 0){
+    else if (sum(answers()) != 0) {
       output$feedback = renderUI({
-        #wrong will eventually be a vector stating which questions are incorrect (we must remove 0s)
+        #wrong will eventually be a vector stating which questions are incorrect
+          #(we must remove 0s)
         wrong = c()
-        for(i in 1:4){
-          if(answers()[i] != 0){
+        for (i in 1:4) {
+          if (answers()[i] != 0) {
             wrong = c(wrong, paste0("Question ", answers()[i], " is incorrect"))
           }
         }
 
         #Return the wrong vector with each element on a separate line
-        if(length(wrong) == 1){
+        if (length(wrong) == 1) {
           HTML(paste(wrong[1], sep = "<br/>"))
         }
-        else if(length(wrong) == 2){
+        else if (length(wrong) == 2) {
           HTML(paste(wrong[1], wrong[2], sep = "<br/>"))
         }
-        else if(length(wrong) == 3){
+        else if (length(wrong) == 3) {
           HTML(paste(wrong[1], wrong[2], wrong[3], sep = "<br/>"))
         }
-        else if(length(wrong) == 4){
+        else if (length(wrong) == 4) {
           HTML(paste(wrong[1], wrong[2], wrong[3], wrong[4], sep = "<br/>"))
         }
       })
 
-      #the Try Again button is re-rendered each time there is at least one incorrect answer (with the default being that the button is enabled and not yet pressed)
+      #the Try Again button is re-rendered each time there is at least one incorrect
+        #answer (with the default being that the button is enabled and not yet pressed)
       #therefore, it is not necessary to update the button to "disabled = FALSE"
       output$showtry = renderUI({
-        actionButton(inputId = "tryagain", HTML(paste(tags$b("Try Again"))), style = "color: #fff; background-color: #074467", width = 200)
+        actionButton(
+          inputId = "tryagain",
+          HTML(paste("Try Again")),
+          style = "default", 
+          size = "large")
       })
 
       shinyjs::disable("submit")
@@ -1392,8 +1622,8 @@ server <- function(input, output, session) {
     shinyjs::enable("submit")
 
     #only reset the p-value drop down for the answers that are incorrect
-    for(i in 1:4){
-      if(answers()[i] != 0){
+    for (i in 1:4) {
+      if (answers()[i] != 0) {
         reset(paste0("menu", i))
       }
     }
@@ -1406,8 +1636,8 @@ server <- function(input, output, session) {
     })
 
     #hide the x for incorrect questions in which you want to try to answer again
-    for(i in answers()){
-      if(i != 0){
+    for (i in answers()) {
+      if (i != 0) {
         shinyjs::hideElement(paste0("pic", i))
       }
     }
@@ -1423,7 +1653,8 @@ server <- function(input, output, session) {
 
     shinyjs::hideElement("playagain")
 
-    #When starting a new game, we must clear all the checks (the play again button only appears when all questions are correct/all images of checks appear)
+    #When starting a new game, we must clear all the checks (the play again button
+      #only appears when all questions are correct/all images of checks appear)
     shinyjs::hideElement("pic1")
     shinyjs::hideElement("pic2")
     shinyjs::hideElement("pic3")
@@ -1431,16 +1662,18 @@ server <- function(input, output, session) {
   })
 
   #Render pic1
-  #isolate the function so that it only recalculates (pictures are only re-rendered) when the submit button is pressed
-  #if all questions have user input, then render the proper images, else don't render any images at all
+  #isolate the function so that it only recalculates (pictures are only re-rendered)
+    #when the submit button is pressed
+  #if all questions have user input, then render the proper images, else don't
+    #render any images at all
   output$pic1 = renderUI({
     input$submit
     isolate(
-      if(length(answers()) == 4){
-        if(answers()[1] == 0){
+      if (length(answers()) == 4) {
+        if (answers()[1] == 0) {
           tags$img(src = "check.png", width = 90)
         }
-        else if(answers()[1] == 1){
+        else if (answers()[1] == 1) {
           tags$img(src = "x.png", width = 90)
         }
       }
@@ -1451,11 +1684,11 @@ server <- function(input, output, session) {
   output$pic2 = renderUI({
     input$submit
     isolate(
-      if(length(answers()) == 4){
-        if(answers()[2] == 0){
+      if (length(answers()) == 4) {
+        if (answers()[2] == 0) {
           tags$img(src = "check.png", width = 90)
         }
-        else if(answers()[2] == 2){
+        else if (answers()[2] == 2) {
           tags$img(src = "x.png", width = 90)
         }
       }
@@ -1466,11 +1699,11 @@ server <- function(input, output, session) {
   output$pic3 = renderUI({
     input$submit
     isolate(
-      if(length(answers()) == 4){
-        if(answers()[3] == 0){
+      if (length(answers()) == 4) {
+        if (answers()[3] == 0) {
           tags$img(src = "check.png", width = 90)
         }
-        else if(answers()[3] == 3){
+        else if (answers()[3] == 3) {
           tags$img(src = "x.png", width = 90)
         }
       }
@@ -1482,11 +1715,11 @@ server <- function(input, output, session) {
   output$pic4 = renderUI({
     input$submit
     isolate(
-      if(length(answers()) == 4){
-        if(answers()[4] == 0){
+      if (length(answers()) == 4) {
+        if (answers()[4] == 0) {
           tags$img(src = "check.png", width = 90)
         }
-        else if(answers()[4] == 4){
+        else if (answers()[4] == 4) {
           tags$img(src = "x.png", width = 90)
         }
       }
