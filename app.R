@@ -79,17 +79,17 @@ ui <- list(
           h1("The Waiter Experiment"),
           p("This app demonstrates the reasoning of a two-sample t-test to determine
           whether a waiter giving a table candy or not affects their tip percentages.
-          The null hypothesis is that the average tip percentages for tables receiving
+          The null hypothesis is that the mean tip percentages for tables receiving
           candy and tables not receiving candy are equal. The alternative hypothesis is
-          that the average tip percentages for tables receiving candy are greater than
-            the average tip percentages for tables not receiving candy."),
+          that the mean tip percentages for tables receiving candy are greater than
+            the mean tip percentages for tables not receiving candy."),
           br(),
-          h2("Instructions:"),
-          tags$li("Use the sliders to select a desired average tip percentage for
+          h2("Instructions"),
+          tags$li("Use the sliders to select a desired mean tip percentage for
                   tables receiving candy and tables not receiving candy. Click 
                   Randomly Assign and move the sliders to observe how the results
                   change based on selected tip percent values. Is there a difference
-                  in a waiter's average tip percentage depending on whether they
+                  in a waiter's mean tip percentage depending on whether they
                   give a table candy or not? Each time the sliders are moved a 
                   new simulated sample is taken for the group of tables involved
                   and the test results are printed at the bottom."),
@@ -106,7 +106,7 @@ ui <- list(
                 icon = icon("book"),
                 size = "large")),
           br(),
-          h2("Acknowledgements:"),
+          h2("Acknowledgements"),
           p("This application's the waiter experiment simulation was conceived 
             and programmed by David Robinson and then redesigned with the matching
             game added by Angela Ting. The latest version was modified by Gonghao
@@ -123,7 +123,7 @@ ui <- list(
           fluidRow(
             column(
               width = 10,
-              h2("Prerequisites:"),
+              h2("Prerequisites"),
               box(
                 title = strong("Two Sample T-Test"),
                 status = "primary",
@@ -131,7 +131,7 @@ ui <- list(
                 collapsed = FALSE,
                 width = 12,
                 p("A two sample t-test is a commonly used hypothesis test to
-                  determine whether the average difference between two groups
+                  determine whether the mean difference between two groups
                   can be explained by random chance when the data arise from
                   normally distributed populations. Two sample t-tests can help
                   answer a question like whether the test results of patients who
@@ -145,7 +145,7 @@ ui <- list(
                 collapsible = TRUE,
                 collapsed = FALSE,
                 width = 12,
-                p("The test statistic involves the difference between group averages
+                p("The test statistic involves the difference between group means
                   standardized by an estimate of the standard deviation of the
                   (degrees of freedom = \\(n_{grp1}+n_{grp2} – 2\\)). The p-value
                   represents the probability of obtaining a difference at least
@@ -164,6 +164,8 @@ ui <- list(
           fluidRow(
             column(
               width = 4,
+              wellPanel(
+              
               p("A study published in the Journal of Applied Social Psychology
                 claims that giving candy to customers can increase a waiter's
                 tip by about 23%."),
@@ -179,27 +181,31 @@ ui <- list(
                   bsButton(
                     inputId = "rand",
                     label = "Randomly Assign",
-                    size = "middle"
+                    size = "large"
                   )
                 ),
                 br(),
                 sliderInput(
                   inputId = "avgtipc",
-                  label = "Enter an average tip percentage for tables assigned
+                  label = "Enter a mean tip percentage for tables assigned
                           to receive candy.",
                   min = 0,
                   max = 50,
+                  post = "%", 
                   value = 0),
                 sliderInput(
                   inputId = "avgtipnc",
-                  label = "Enter an average tip percentage for tables assigned
+                  label = "Enter a mean tip percentage for tables assigned
                           to receive no candy.",
                   min = 0,
                   max = 25,
+                  post = "%", 
                   value = 0),
-                actionButton(
+                bsButton(
                   inputId = "reset", 
-                  label = "Reset")
+                  label = "Reset", 
+                  size = "large")
+              )
               )
             ),
             column(
@@ -207,28 +213,28 @@ ui <- list(
               htmlOutput("img1"),
               textInput(
                 inputId = "tabtip1",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img2"),
               textInput(
                 inputId = "tabtip2",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img3"),
               textInput(
                 inputId = "tabtip3",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img4"),
               textInput(
                 inputId = "tabtip4",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL
@@ -236,14 +242,14 @@ ui <- list(
               htmlOutput("img5"),
               textInput(
                 inputId = "tabtip5",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img6"),
               textInput(
                 inputId = "tabtip6",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL)
@@ -253,42 +259,42 @@ ui <- list(
               htmlOutput("img7"),
               textInput(
                 inputId = "tabtip7",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img8"),
               textInput(
                 inputId = "tabtip8",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img9"),
               textInput(
                 inputId = "tabtip9",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img10"),
               textInput(
                 inputId = "tabtip10",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img11"),
               textInput(
                 inputId = "tabtip11",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img12"),
               textInput(
                 inputId = "tabtip12",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL)
@@ -298,42 +304,42 @@ ui <- list(
               htmlOutput("img13"),
               textInput(
                 inputId = "tabtip13",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img14"),
               textInput(
                 inputId = "tabtip14",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img15"),
               textInput(
                 inputId = "tabtip15",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img16"),
               textInput(
                 inputId = "tabtip16",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img17"),
               textInput(
                 inputId = "tabtip17",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img18"),
               textInput(
                 inputId = "tabtip18",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL)
@@ -343,42 +349,42 @@ ui <- list(
               htmlOutput("img19"),
               textInput(
                 inputId = "tabtip19",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img20"),
               textInput(
                 inputId = "tabtip20",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img21"),
               textInput(
                 inputId = "tabtip21",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img22"),
               textInput(
                 inputId = "tabtip22",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img23"),
               textInput(
                 inputId = "tabtip23",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
               htmlOutput("img24"),
               textInput(
                 inputId = "tabtip24",
-                label = NULL,
+                label = "% Tip", 
                 value = "",
                 width = '72px',
                 placeholder = NULL),
@@ -442,7 +448,7 @@ ui <- list(
                 tags$li("Move the sliders for effect size and sample size to see how
                    changes in each affect the p-value."),
                 tags$li("Observe whether researchers are more or less likely to
-                   detect a difference in average tip percentage when you change
+                   detect a difference in mean tip percentage when you change
                    the effect size and sample size."),
               ), 
               fluidRow(
@@ -452,15 +458,18 @@ ui <- list(
                   sliderInput(
                     inputId = "ef_size",
                     "Adjust the observed effect size",
-                    min = 0 ,
-                    max = 50,
+                    min = 0,
+                    max = 50, 
+                    post = "%",
                     value = 0,
-                    width = 600),
+                    width = 600, 
+                  ),
                   sliderInput(
                     inputId = "samp_size",
                     "Adjust the sample size",
                     min = 10,
                     max = 100,
+                    post = "%", 
                     value = 10,
                     width = 600),
                   br(),
@@ -470,7 +479,7 @@ ui <- list(
                   width = 6,
                   box(
                     width = 12,
-                    background = "purple",
+                    # background = "purple",
                     h3("Test Hypotheses:"),
                     br(),
                     HTML(paste("H", tags$sub(0),
@@ -495,11 +504,10 @@ ui <- list(
                   offset = 6, 
                   width = 6,
                   br(),
-                  tags$head(tags$style("#pvalue{color: white; font-size: 20px")),
+                  tags$head(tags$style("#pvalue{color: black; font-size: 20px")),
                   box(
                     width = 12,
-                    background = "purple",
-                    htmlOutput("pvalue")),
+                    htmlOutput("pvalue")), 
                   br()
                 )
               ), 
@@ -556,7 +564,8 @@ ui <- list(
                   width = 2,
                   br(),
                   br(),
-                  htmlOutput("pic1")
+                  uiOutput("pic1")
+                  #htmlOutput("pic1")
                 ),
                 #Question 2
                 box(
@@ -584,7 +593,8 @@ ui <- list(
                   width = 2,
                   br(),
                   br(),
-                  htmlOutput("pic2")
+                  uiOutput("pic2")
+                  #htmlOutput("pic2")
                 ),
                 #Question 3
                 box(
@@ -611,7 +621,8 @@ ui <- list(
                   width = 2,
                   br(),
                   br(),
-                  htmlOutput("pic3")
+                  uiOutput("pic3")
+                  #htmlOutput("pic3")
                 ),
                 #Question 4
                 box(
@@ -639,7 +650,8 @@ ui <- list(
                   width = 2,
                   br(),
                   br(),
-                  htmlOutput("pic4")
+                  uiOutput("pic4")
+                  #htmlOutput("pic4")
                 ),
 
                 ###Submit Button
@@ -647,7 +659,7 @@ ui <- list(
                   column(
                     width = 12,
                     offset = 4,
-                    actionButton(
+                    bsButton(
                       inputId = "submit",
                       HTML(paste("Submit")),
                       style = "default",
@@ -658,7 +670,7 @@ ui <- list(
                     br(),
                     uiOutput("showtry"),
                     br(),
-                    actionButton(
+                    bsButton(
                       inputId = "playagain",
                       HTML(paste("Play Again")),
                       style = "default",
@@ -707,6 +719,16 @@ ui <- list(
             class = "hangingindent",
             "Jeroen Ooms (2020). V8: Embedded JavaScript and WebAssembly Engine for R.
             R package version 3.2.0.https://CRAN.R-project.org/package=V8"
+          ), 
+          p(
+            class = "hangingindent", 
+            "Image: https://webstockreview.net/image/clipart-restaurant-restaurant
+            -booth/2478454.html"
+          ), 
+          p(
+            class = "hangingindent", 
+            "Study:  http://onlinelibrary.wiley.com/doi/10.1111/j.1559-1816.2002.tb00216.
+            x/abstract."
           ), 
           br(),
           br(),
@@ -927,7 +949,7 @@ server <- function(input, output, session) {
 
   #render HTML, call avg.nc()
   output$average.nc = renderUI({
-    HTML(paste0("The average tip for the 12 tables not receiving candy in our sample is: ",
+    HTML(paste0("The mean tip for the 12 tables not receiving candy in our sample is: ",
                 tags$b(avg.nc()),
                 tags$b(" %"),"."))
   })
@@ -1396,7 +1418,7 @@ server <- function(input, output, session) {
 
   #render HTML; call pval()
   output$pvalue = renderUI({
-    HTML(paste0("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The p-value is: ", pval(), "."))
+    HTML(paste0(p("The p-value is: ", pval(), ".")))
   })
 
   #move from Determining P-Values to Test Your Understanding
@@ -1563,6 +1585,39 @@ server <- function(input, output, session) {
     else if (sum(answers()) == 0) {
       output$feedback = renderUI({
         "CORRECT"
+        
+        #### Correct/Wrong symbols ----
+        output$pic1 <- renderIcon(
+          icon = ifelse(
+            test = answers()[1] == 0,
+            yes = "correct",
+            no = "incorrect"
+          )
+        )
+        
+        output$pic2 <- renderIcon(
+          icon = ifelse(
+            test = answers()[2] == 2,
+            yes = "incorrect",
+            no = "correct"
+          )
+        )
+        
+        output$pic3 <- renderIcon(
+          icon = ifelse(
+            test = answers()[3] == 3,
+            yes = "incorrect",
+            no = "correct"
+          )
+        )
+        
+        output$pic4 <- renderIcon(
+          icon = ifelse(
+            test = answers()[4] == 4,
+            yes = "incorrect",
+            no = "correct"
+          )
+        )
       })
 
       shinyjs::disable("submit")
@@ -1599,8 +1654,42 @@ server <- function(input, output, session) {
       #the Try Again button is re-rendered each time there is at least one incorrect
         #answer (with the default being that the button is enabled and not yet pressed)
       #therefore, it is not necessary to update the button to "disabled = FALSE"
+      
+      #### Correct/Wrong symbols ----
+      output$pic1 <- renderIcon(
+        icon = ifelse(
+          test = answers()[1] == 0,
+          yes = "correct",
+          no = "incorrect"
+        )
+      )
+
+      output$pic2 <- renderIcon(
+        icon = ifelse(
+          test = answers()[2] == 2,
+          yes = "incorrect",
+          no = "correct"
+        )
+      )
+
+      output$pic3 <- renderIcon(
+        icon = ifelse(
+          test = answers()[3] == 3,
+          yes = "incorrect",
+          no = "correct"
+        )
+      )
+
+      output$pic4 <- renderIcon(
+        icon = ifelse(
+          test = answers()[4] == 4,
+          yes = "incorrect",
+          no = "correct"
+        )
+      )
+
       output$showtry = renderUI({
-        actionButton(
+        bsButton(
           inputId = "tryagain",
           HTML(paste("Try Again")),
           style = "default", 
@@ -1610,11 +1699,11 @@ server <- function(input, output, session) {
       shinyjs::disable("submit")
     }
 
-    #Re-show the elements that were hidden when playagain was pressed
-    shinyjs::showElement("pic1")
-    shinyjs::showElement("pic2")
-    shinyjs::showElement("pic3")
-    shinyjs::showElement("pic4")
+    # #Re-show the elements that were hidden when playagain was pressed
+    # shinyjs::showElement("pic1")
+    # shinyjs::showElement("pic2")
+    # shinyjs::showElement("pic3")
+    # shinyjs::showElement("pic4")
   })
 
 
@@ -1666,65 +1755,103 @@ server <- function(input, output, session) {
     #when the submit button is pressed
   #if all questions have user input, then render the proper images, else don't
     #render any images at all
-  output$pic1 = renderUI({
-    input$submit
-    isolate(
-      if (length(answers()) == 4) {
-        if (answers()[1] == 0) {
-          tags$img(src = "check.png", width = 90)
-        }
-        else if (answers()[1] == 1) {
-          tags$img(src = "x.png", width = 90)
-        }
-      }
-    )
-  })
-
-  #Render pic2
-  output$pic2 = renderUI({
-    input$submit
-    isolate(
-      if (length(answers()) == 4) {
-        if (answers()[2] == 0) {
-          tags$img(src = "check.png", width = 90)
-        }
-        else if (answers()[2] == 2) {
-          tags$img(src = "x.png", width = 90)
-        }
-      }
-    )
-  })
-
-  #Render pic3
-  output$pic3 = renderUI({
-    input$submit
-    isolate(
-      if (length(answers()) == 4) {
-        if (answers()[3] == 0) {
-          tags$img(src = "check.png", width = 90)
-        }
-        else if (answers()[3] == 3) {
-          tags$img(src = "x.png", width = 90)
-        }
-      }
-    )
-  })
-
-
-  #Render pic4
-  output$pic4 = renderUI({
-    input$submit
-    isolate(
-      if (length(answers()) == 4) {
-        if (answers()[4] == 0) {
-          tags$img(src = "check.png", width = 90)
-        }
-        else if (answers()[4] == 4) {
-          tags$img(src = "x.png", width = 90)
-        }
-      }
-    )
-  })
+  
+  #### Correct/Wrong symbols ----
+  # output$pic1 <- renderIcon(
+  #   icon = ifelse(
+  #     test = answers()[1] == 0,
+  #     yes = "correct",
+  #     no = "incorrect"
+  #   )
+  # )
+  # 
+  # output$pic2 <- renderIcon(
+  #   icon = ifelse(
+  #     test = answers()[2] == 0,
+  #     yes = "correct",
+  #     no = "incorrect"
+  #   )
+  # )
+  # 
+  # output$pic3 <- renderIcon(
+  #   icon = ifelse(
+  #     test = answers()[3] == 0,
+  #     yes = "correct",
+  #     no = "incorrect"
+  #   )
+  # )
+  # 
+  # output$pic4 <- renderIcon(
+  #   icon = ifelse(
+  #     test = answers()[4] == 0,
+  #     yes = "correct",
+  #     no = "incorrect"
+  #   )
+  # )
+  
+  # output$pic1 = renderUI({
+  #   renderIcon(
+  #     input$submit, 
+  #     isolate(
+  #       if (length(answers()) == 4) {
+  #         if (answers()[1] == 0) {
+  #           yes = "correct"
+  #           #tags$img(src = "check.png", width = 90)
+  #         }
+  #         else if (answers()[1] == 1) {
+  #           no = "incorrect"
+  #           #tags$img(src = "x.png", width = 90)
+  #         }
+  #       }
+  #     )
+  #   )
+  # })
+  #
+  # #Render pic2
+  # output$pic2 = renderUI({
+  #   input$submit
+  #   isolate(
+  #     if (length(answers()) == 4) {
+  #       if (answers()[2] == 0) {
+  #         tags$img(src = "check.png", width = 90)
+  #       }
+  #       else if (answers()[2] == 2) {
+  #         tags$img(src = "x.png", width = 90)
+  #       }
+  #     }
+  #   )
+  # })
+  #
+  # #Render pic3
+  # output$pic3 = renderUI({
+  #   input$submit
+  #   isolate(
+  #     if (length(answers()) == 4) {
+  #       if (answers()[3] == 0) {
+  #         tags$img(src = "check.png", width = 90)
+  #       }
+  #       else if (answers()[3] == 3) {
+  #         tags$img(src = "x.png", width = 90)
+  #       }
+  #     }
+  #   )
+  # })
+  #
+  #
+  # #Render pic4
+  # output$pic4 = renderUI({
+  #   input$submit
+  #   isolate(
+  #     if (length(answers()) == 4) {
+  #       if (answers()[4] == 0) {
+  #         tags$img(src = "check.png", width = 90)
+  #       }
+  #       else if (answers()[4] == 4) {
+  #         tags$img(src = "x.png", width = 90)
+  #       }
+  #     }
+  #   )
+  # })
 }
 
 # Boast app call ----
