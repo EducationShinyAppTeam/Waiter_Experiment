@@ -8,6 +8,7 @@ library(shinyBS)
 library(boastUtils)
 library(shinyjs)
 library(shinyWidgets)
+library(ggplot2)
 
 # App Meta Data----------------------------------------------------------------
 APP_TITLE  <<- "Waiter Experiment"
@@ -85,19 +86,21 @@ ui <- list(
             the mean tip percentages for tables not receiving candy."),
           br(),
           h2("Instructions"),
-          tags$li("Use the sliders to select a desired mean tip percentage for
-                  tables receiving candy and tables not receiving candy. Click 
-                  Randomly Assign and move the sliders to observe how the results
-                  change based on selected tip percent values. Is there a difference
-                  in a waiter's mean tip percentage depending on whether they
-                  give a table candy or not? Each time the sliders are moved a 
-                  new simulated sample is taken for the group of tables involved
-                  and the test results are printed at the bottom."),
-          tags$li("The Determining P-values section of the app allows the user 
-                  to see how the p-value changes for different observed effect
-                  sizes and different sample sizes."), 
-          tags$li("Finally, a quiz tests your knowledge of how effect size and
-                  sample size affect the p-value."),
+          tags$ul(
+            tags$li("Use the sliders to select a desired mean tip percentage for
+                    tables receiving candy and tables not receiving candy. Click 
+                    Randomly Assign and move the sliders to observe how the results
+                    change based on selected tip percent values. Is there a difference
+                    in a waiter's mean tip percentage depending on whether they
+                    give a table candy or not? Each time the sliders are moved a 
+                    new simulated sample is taken for the group of tables involved
+                    and the test results are printed at the bottom."),
+            tags$li("The Determining P-values section of the app allows the user 
+                    to see how the p-value changes for different observed effect
+                    sizes and different sample sizes."), 
+            tags$li("Finally, a quiz tests your knowledge of how effect size and
+                    sample size affect the p-value.")
+          ), 
           br(), 
           div(style = "text-align: center",
               bsButton(
@@ -110,7 +113,7 @@ ui <- list(
           p("This application's the waiter experiment simulation was conceived 
             and programmed by David Robinson and then redesigned with the matching
             game added by Angela Ting. The latest version was modified by Gonghao
-            Liu and Shravani Samala",
+            Liu and Shravani Samala.",
             br(),
             br(),
             br(),
@@ -161,259 +164,276 @@ ui <- list(
         tabItem(
           tabName = "first",
           h2("Waiter Simulation"), 
-          fluidRow(
-            column(
-              width = 4,
-              wellPanel(
-              
-              p("A study published in the Journal of Applied Social Psychology
-                claims that giving candy to customers can increase a waiter's
-                tip by about 23%."),
+          p("A study published in the Journal of Applied Social Psychology
+              claims that giving candy to customers can increase a waiter's
+              tip by about 23%."),
+          p("In the Waiter Simulation Input tab, click the button to randomly
+            assign which tables receive candy. Then, check the Waiter Simulation 
+            Output tab to see the test hypotheses and test values."),
+          tabsetPanel(
+            tabPanel(
+              title = "Waiter Sim. Random Assignment",
               br(),
-              p("Click below to randomly assign which tables receive candy and 
-                check below the sliders for the test hypotheses and test values."),
-              br(),
-              shinyjs::useShinyjs(),
-              div(
-                id = "form",
-                div(
-                  style = "text-align: left",
-                  bsButton(
-                    inputId = "rand",
-                    label = "Randomly Assign",
-                    size = "large"
+              fluidRow(
+                column(
+                  width = 5,
+                  wellPanel(
+                    br(),
+                    shinyjs::useShinyjs(),
+                    div(
+                      id = "form",
+                      div(
+                        style = "text-align: left",
+                        bsButton(
+                          inputId = "rand",
+                          label = "Randomly Assign",
+                          size = "large"
+                        )
+                      ),
+                      br(),
+                      sliderInput(
+                        inputId = "avgtipc",
+                        label = "Enter a mean tip percentage for tables assigned
+                            to receive candy.",
+                        min = 0,
+                        max = 50,
+                        post = "%", 
+                        value = 0),
+                      sliderInput(
+                        inputId = "avgtipnc",
+                        label = "Enter a mean tip percentage for tables assigned
+                            to receive no candy.",
+                        min = 0,
+                        max = 25,
+                        post = "%", 
+                        value = 0),
+                      bsButton(
+                        inputId = "reset", 
+                        label = "Reset", 
+                        size = "large")
+                    )
                   )
                 ),
-                br(),
-                sliderInput(
-                  inputId = "avgtipc",
-                  label = "Enter a mean tip percentage for tables assigned
-                          to receive candy.",
-                  min = 0,
-                  max = 50,
-                  post = "%", 
-                  value = 0),
-                sliderInput(
-                  inputId = "avgtipnc",
-                  label = "Enter a mean tip percentage for tables assigned
-                          to receive no candy.",
-                  min = 0,
-                  max = 25,
-                  post = "%", 
-                  value = 0),
-                bsButton(
-                  inputId = "reset", 
-                  label = "Reset", 
-                  size = "large")
+                column(
+                  width = 1,
+                  htmlOutput("img1"),
+                  textInput(
+                    inputId = "tabtip1",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img2"),
+                  textInput(
+                    inputId = "tabtip2",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img3"),
+                  textInput(
+                    inputId = "tabtip3",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img4"),
+                  textInput(
+                    inputId = "tabtip4",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL
+                  )
+                ), 
+                column(
+                  width = 1, 
+                  htmlOutput("img5"),
+                  textInput(
+                    inputId = "tabtip5",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img6"),
+                  textInput(
+                    inputId = "tabtip6",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL), 
+                  htmlOutput("img7"),
+                  textInput(
+                    inputId = "tabtip7",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img8"),
+                  textInput(
+                    inputId = "tabtip8",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                ), 
+                column(
+                  width = 1,   
+                  htmlOutput("img9"),
+                  textInput(
+                    inputId = "tabtip9",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img10"),
+                  textInput(
+                    inputId = "tabtip10",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img11"),
+                  textInput(
+                    inputId = "tabtip11",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img12"),
+                  textInput(
+                    inputId = "tabtip12",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL)
+                ),
+                column(
+                  width = 1,
+                  htmlOutput("img13"),
+                  textInput(
+                    inputId = "tabtip13",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img14"),
+                  textInput(
+                    inputId = "tabtip14",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img15"),
+                  textInput(
+                    inputId = "tabtip15",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img16"),
+                  textInput(
+                    inputId = "tabtip16",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL)
+                ), 
+                column(
+                  width = 1, 
+                  htmlOutput("img17"),
+                  textInput(
+                    inputId = "tabtip17",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img18"),
+                  textInput(
+                    inputId = "tabtip18",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL), 
+                  htmlOutput("img19"),
+                  textInput(
+                    inputId = "tabtip19",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img20"),
+                  textInput(
+                    inputId = "tabtip20",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                ), 
+                column(
+                  width = 1, 
+                  htmlOutput("img21"),
+                  textInput(
+                    inputId = "tabtip21",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img22"),
+                  textInput(
+                    inputId = "tabtip22",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img23"),
+                  textInput(
+                    inputId = "tabtip23",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  htmlOutput("img24"),
+                  textInput(
+                    inputId = "tabtip24",
+                    label = "% Tip",
+                    value = "",
+                    width = '72px',
+                    placeholder = NULL),
+                  br(),
+                  br()
+                )
               )
-              )
-            ),
-            column(
-              width = 2,
-              htmlOutput("img1"),
-              textInput(
-                inputId = "tabtip1",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img2"),
-              textInput(
-                inputId = "tabtip2",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img3"),
-              textInput(
-                inputId = "tabtip3",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img4"),
-              textInput(
-                inputId = "tabtip4",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL
-              ),
-              htmlOutput("img5"),
-              textInput(
-                inputId = "tabtip5",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img6"),
-              textInput(
-                inputId = "tabtip6",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL)
-            ),
-            column(
-              width = 2,
-              htmlOutput("img7"),
-              textInput(
-                inputId = "tabtip7",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img8"),
-              textInput(
-                inputId = "tabtip8",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img9"),
-              textInput(
-                inputId = "tabtip9",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img10"),
-              textInput(
-                inputId = "tabtip10",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img11"),
-              textInput(
-                inputId = "tabtip11",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img12"),
-              textInput(
-                inputId = "tabtip12",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL)
-            ),
-            column(
-              width = 2,
-              htmlOutput("img13"),
-              textInput(
-                inputId = "tabtip13",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img14"),
-              textInput(
-                inputId = "tabtip14",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img15"),
-              textInput(
-                inputId = "tabtip15",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img16"),
-              textInput(
-                inputId = "tabtip16",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img17"),
-              textInput(
-                inputId = "tabtip17",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img18"),
-              textInput(
-                inputId = "tabtip18",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL)
-            ),
-            column(
-              width = 2,
-              htmlOutput("img19"),
-              textInput(
-                inputId = "tabtip19",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img20"),
-              textInput(
-                inputId = "tabtip20",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img21"),
-              textInput(
-                inputId = "tabtip21",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img22"),
-              textInput(
-                inputId = "tabtip22",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img23"),
-              textInput(
-                inputId = "tabtip23",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              htmlOutput("img24"),
-              textInput(
-                inputId = "tabtip24",
-                label = "% Tip", 
-                value = "",
-                width = '72px',
-                placeholder = NULL),
-              br(),
-              br()
-            )
-          ),
-          fluidRow(
-            column(
-              width = 8,
-              offset = 2,
-              wellPanel(
-                h2("Test Hypotheses:"),
-                br(),
-                HTML(paste("H", tags$sub(0),
-                           ": Giving customers candy does not affect the waiter's
-                           tip percentage")),
-                br(),
-                p("(Candy Tip = No Candy Tip)"),
-                br(),
-                HTML(paste("H", tags$sub(1),
-                           ": Giving customers candy does affect the waiter's tip
-                           percentage")),
-                br(),
-                p("(Candy Tip > No Candy Tip)")
-              ),
-              conditionalPanel(
-                condition = "input.rand",
-                wellPanel(
+            ), 
+            tabPanel(
+              title = "Waiter Sim. Test Info", 
+              br(), 
+              fluidRow(
+                column(
+                  width = 6,
+                  offset = 0,
+                    wellPanel(
+                      style = "background: white",
+                      h2("Test Hypotheses:"),
+                      br(),
+                      HTML(paste("H", tags$sub(0),
+                                 ": Giving customers candy does not affect the waiter's
+                             tip percentage")),
+                      br(),
+                      p("(Candy Tip = No Candy Tip)"),
+                      br(),
+                      HTML(paste("H", tags$sub(1),
+                                 ": Giving customers candy does affect the waiter's tip
+                             percentage")),
+                      br(),
+                      p("(Candy Tip > No Candy Tip)"), 
+                    )
+                  ),
+                column(
+                  width = 6,
+                  offset = 0, 
+                  wellPanel(
+                    style = "background: white",
                   h2("Test Values:"),
                   br(),
                   htmlOutput("average.c"),
@@ -425,8 +445,9 @@ ui <- list(
                   htmlOutput("test.stat"),
                   br(),
                   htmlOutput("p_value")
+                  )
                 )
-              )
+              ) 
             )
           )
         ),
@@ -454,26 +475,29 @@ ui <- list(
               fluidRow(
                 column(
                   width = 6,
-                  br(),
-                  sliderInput(
-                    inputId = "ef_size",
-                    "Adjust the observed effect size",
-                    min = 0,
-                    max = 50, 
-                    post = "%",
-                    value = 0,
-                    width = 600, 
-                  ),
-                  sliderInput(
-                    inputId = "samp_size",
-                    "Adjust the sample size",
-                    min = 10,
-                    max = 100,
-                    post = "%", 
-                    value = 10,
-                    width = 600),
-                  br(),
-                  br()
+                  wellPanel(
+                    br(),
+                    sliderInput(
+                      inputId = "ef_size",
+                      "Adjust the observed effect size",
+                      min = 0,
+                      max = 50, 
+                      post = "%",
+                      value = 0,
+                      width = 600, 
+                      animate = animationOptions(interval = 100, loop = FALSE)
+                    ),
+                    sliderInput(
+                      inputId = "samp_size",
+                      "Adjust the sample size",
+                      min = 10,
+                      max = 100,
+                      value = 10,
+                      width = 600, 
+                      animate = animationOptions(interval = 100, loop = FALSE)),
+                    br(),
+                    br()
+                  )
                 ), 
                 column(
                   width = 6,
@@ -496,21 +520,14 @@ ui <- list(
                     "(Candy Tip > No Candy Tip)",
                     br(),
                     br()
-                  )
-                )
-              ), 
-              fluidRow(
-                column(
-                  offset = 6, 
-                  width = 6,
-                  br(),
+                  ), 
                   tags$head(tags$style("#pvalue{color: black; font-size: 20px")),
                   box(
                     width = 12,
-                    htmlOutput("pvalue")), 
-                  br()
+                    htmlOutput("pvalue"))
                 )
               ), 
+              plotOutput("ef_sizeGraph"), 
               fluidRow(
                 column(
                   width = 12,
@@ -536,13 +553,9 @@ ui <- list(
                        to the effect size and sample size. Try to do this without
                        doing any calculations using the P-value calculator"),
               br(), 
-              
-
                 #Question 1
                 box(
                   width = 10,
-                  # style = "color: #000000; background-color: #b6d0df",
-                  # background = "blue",
                   fluidRow(
                     column(
                       width = 6,
@@ -570,8 +583,6 @@ ui <- list(
                 #Question 2
                 box(
                   width = 10,
-                  # style = "color: #000000; background-color: #dae1e5",
-                  # background = "white",
                   fluidRow(
                     column(
                       width = 6,
@@ -599,7 +610,6 @@ ui <- list(
                 #Question 3
                 box(
                   width = 10,
-                  # style = "color: #000000; background-color: #b6d0df", background = "gray",
                   fluidRow(
                     column(
                       width = 6,
@@ -627,8 +637,6 @@ ui <- list(
                 #Question 4
                 box(
                   width = 10,
-                  # style = "color: #000000; background-color: #dae1e5",
-                  # background = "white",
                   fluidRow(
                     column(
                       width = 6,
@@ -680,7 +688,6 @@ ui <- list(
               )
             )
           ), 
-          
         
         #Reference Page ----
         tabItem(
@@ -836,8 +843,6 @@ server <- function(input, output, session) {
   #reset button
   observeEvent(input$reset,
                {shinyjs::reset("form")})
-
-
 
   ######TEST VALUES CALCULATIONS######
 
@@ -1627,6 +1632,7 @@ server <- function(input, output, session) {
     #CASE 3: There is at least one incorrect answer
     else if (sum(answers()) != 0) {
       output$feedback = renderUI({
+        "Keep Trying!"
         #wrong will eventually be a vector stating which questions are incorrect
           #(we must remove 0s)
         wrong = c()
@@ -1649,6 +1655,8 @@ server <- function(input, output, session) {
         else if (length(wrong) == 4) {
           HTML(paste(wrong[1], wrong[2], wrong[3], wrong[4], sep = "<br/>"))
         }
+        
+        
       })
 
       #the Try Again button is re-rendered each time there is at least one incorrect
@@ -1699,11 +1707,11 @@ server <- function(input, output, session) {
       shinyjs::disable("submit")
     }
 
-    # #Re-show the elements that were hidden when playagain was pressed
-    # shinyjs::showElement("pic1")
-    # shinyjs::showElement("pic2")
-    # shinyjs::showElement("pic3")
-    # shinyjs::showElement("pic4")
+    #Re-show the elements that were hidden when playagain was pressed
+    shinyjs::showElement("pic1")
+    shinyjs::showElement("pic2")
+    shinyjs::showElement("pic3")
+    shinyjs::showElement("pic4")
   })
 
 
@@ -1736,9 +1744,9 @@ server <- function(input, output, session) {
   observeEvent(input$playagain, {
     shinyjs::enable("submit")
 
-    output$feedback = renderUI({
-      " "
-    })
+    # output$feedback = renderUI({
+    #   " "
+    # })
 
     shinyjs::hideElement("playagain")
 
@@ -1749,109 +1757,51 @@ server <- function(input, output, session) {
     shinyjs::hideElement("pic3")
     shinyjs::hideElement("pic4")
   })
+  
+  pvalForGraphs = reactive({
+    #I actually invalidated this condition in the UI by starting the sample size at 10
+    if ((esize() == 0) | (sampsize() == 0)) {
+      return("0.5")
+    }
+    else{
+      pval = 1 - pnorm(abs(zstat()))
+      rpval = round(pval, 4)
+      return(rpval)
+    }
+    
+  })
+  ### Create Time Plot ----
+  pval1 <- function(x,m,v){
+    1 - pnorm(x, mean = m, sd = sqrt(v))
+  }
+  
+  
+  observeEvent(
+    eventExpr = c(input$ef_size, pval1, input$samp_size),
+    handlerExpr = {
+      output$ef_sizeGraph <- renderPlot(
 
-  #Render pic1
-  #isolate the function so that it only recalculates (pictures are only re-rendered)
-    #when the submit button is pressed
-  #if all questions have user input, then render the proper images, else don't
-    #render any images at all
+        ggplot() +
+          xlim(-4, 4) +
+          stat_function(
+            fun = pval1,
+            args = list(m = 0, v = 1),
+            color = "blue"
+          ) +
+          geom_point(
+            mapping = aes(x = input$ef_size, y = pval1(0,0,1)),
+            color = "red"
+          ) +
+          labs(title = "Effect Size vs. P-Value") +
+
+          theme_bw()+
+          xlab("Effect Size") +
+          ylab("P-Value")
+
+      )}
+      )
+           
   
-  #### Correct/Wrong symbols ----
-  # output$pic1 <- renderIcon(
-  #   icon = ifelse(
-  #     test = answers()[1] == 0,
-  #     yes = "correct",
-  #     no = "incorrect"
-  #   )
-  # )
-  # 
-  # output$pic2 <- renderIcon(
-  #   icon = ifelse(
-  #     test = answers()[2] == 0,
-  #     yes = "correct",
-  #     no = "incorrect"
-  #   )
-  # )
-  # 
-  # output$pic3 <- renderIcon(
-  #   icon = ifelse(
-  #     test = answers()[3] == 0,
-  #     yes = "correct",
-  #     no = "incorrect"
-  #   )
-  # )
-  # 
-  # output$pic4 <- renderIcon(
-  #   icon = ifelse(
-  #     test = answers()[4] == 0,
-  #     yes = "correct",
-  #     no = "incorrect"
-  #   )
-  # )
-  
-  # output$pic1 = renderUI({
-  #   renderIcon(
-  #     input$submit, 
-  #     isolate(
-  #       if (length(answers()) == 4) {
-  #         if (answers()[1] == 0) {
-  #           yes = "correct"
-  #           #tags$img(src = "check.png", width = 90)
-  #         }
-  #         else if (answers()[1] == 1) {
-  #           no = "incorrect"
-  #           #tags$img(src = "x.png", width = 90)
-  #         }
-  #       }
-  #     )
-  #   )
-  # })
-  #
-  # #Render pic2
-  # output$pic2 = renderUI({
-  #   input$submit
-  #   isolate(
-  #     if (length(answers()) == 4) {
-  #       if (answers()[2] == 0) {
-  #         tags$img(src = "check.png", width = 90)
-  #       }
-  #       else if (answers()[2] == 2) {
-  #         tags$img(src = "x.png", width = 90)
-  #       }
-  #     }
-  #   )
-  # })
-  #
-  # #Render pic3
-  # output$pic3 = renderUI({
-  #   input$submit
-  #   isolate(
-  #     if (length(answers()) == 4) {
-  #       if (answers()[3] == 0) {
-  #         tags$img(src = "check.png", width = 90)
-  #       }
-  #       else if (answers()[3] == 3) {
-  #         tags$img(src = "x.png", width = 90)
-  #       }
-  #     }
-  #   )
-  # })
-  #
-  #
-  # #Render pic4
-  # output$pic4 = renderUI({
-  #   input$submit
-  #   isolate(
-  #     if (length(answers()) == 4) {
-  #       if (answers()[4] == 0) {
-  #         tags$img(src = "check.png", width = 90)
-  #       }
-  #       else if (answers()[4] == 4) {
-  #         tags$img(src = "x.png", width = 90)
-  #       }
-  #     }
-  #   )
-  # })
 }
 
 # Boast app call ----
