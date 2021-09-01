@@ -87,14 +87,11 @@ ui <- list(
           br(),
           h2("Instructions"),
           tags$ul(
-            tags$li("Use the sliders to select a desired mean tip percentage for
-                    tables receiving candy and tables not receiving candy. Click 
-                    Randomly Assign and move the sliders to observe how the results
-                    change based on selected tip percent values. Is there a difference
-                    in a waiter's mean tip percentage depending on whether they
-                    give a table candy or not? Each time the sliders are moved a 
-                    new simulated sample is taken for the group of tables involved
-                    and the test results are printed at the bottom."),
+            tags$li("Click Randomly Assign to choose which tables get the candy
+                    and which do not. Use the sliders to select a desired average
+                    tip percentage for tables receiving candy and tables not
+                    receiving candy and observe how the results change based on
+                    selected tip percent values."),
             tags$li("The Determining P-values section of the app allows the user 
                     to see how the p-value changes for different observed effect
                     sizes and different sample sizes."), 
@@ -113,7 +110,8 @@ ui <- list(
           p("This application's the waiter experiment simulation was conceived 
             and programmed by David Robinson and then redesigned with the matching
             game added by Angela Ting. The latest version was modified by Gonghao
-            Liu and Shravani Samala.",
+            Liu and Shravani Samala in 2021. A special thanks to Dr. Neil Hatfield
+            for creating the graph seen in the Determining P-Values page.",
             br(),
             br(),
             br(),
@@ -149,8 +147,8 @@ ui <- list(
                 collapsed = FALSE,
                 width = 12,
                 p("The test statistic involves the difference between group means
-                  standardized by an estimate of the standard deviation of the
-                  (degrees of freedom = \\(n_{grp1}+n_{grp2} – 2\\)). The p-value
+                  standardized by an estimate of the standard deviation of the 
+                  difference (degrees of freedom = \\(n_{grp1}+n_{grp2} - 2\\)). The p-value
                   represents the probability of obtaining a difference at least
                   as extreme as the one in your sample data. Thus, a large p-value
                   indicates the null hypothesis of no difference in means provides
@@ -158,7 +156,14 @@ ui <- list(
                   taken to be below 0.05) indicate the null hypothesis is a poor
                   explanation of the data."))
             )
-          )
+          ), 
+          br(), 
+          div(style = "text-align: center",
+              bsButton(
+                inputId = "go2",
+                label = "Simulation!",
+                icon = icon("book"),
+                size = "large"))
         ),
         ##Waiter's Experiment Page ----
         tabItem(
@@ -167,12 +172,15 @@ ui <- list(
           p("A study published in the Journal of Applied Social Psychology
               claims that giving candy to customers can increase a waiter's
               tip by about 23%."),
-          p("In the Waiter Simulation Input tab, click the button to randomly
-            assign which tables receive candy. Then, check the Waiter Simulation 
-            Output tab to see the test hypotheses and test values."),
+          p("In the Waiter Simulation Input tab, FIRST click the button to randomly
+            assign which tables receive candy and then use the sliders to set the
+            mean tip percentage for tables with candy and no candy. Then, check
+            the Waiter Simulation Output tab to see the test hypotheses and test
+            values."),
+          br(), 
           tabsetPanel(
             tabPanel(
-              title = "Waiter Sim. Random Assignment",
+              title = "Random Assignment",
               br(),
               fluidRow(
                 column(
@@ -406,7 +414,7 @@ ui <- list(
               )
             ), 
             tabPanel(
-              title = "Waiter Sim. Test Info", 
+              title = "Test Info", 
               br(), 
               fluidRow(
                 column(
@@ -480,12 +488,12 @@ ui <- list(
                     sliderInput(
                       inputId = "ef_size",
                       "Adjust the observed effect size",
-                      min = 0,
-                      max = 50, 
+                      min = -10,
+                      max = 20, 
                       post = "%",
                       value = 0,
                       width = 600, 
-                      animate = animationOptions(interval = 100, loop = FALSE)
+                      animate = animationOptions(interval = 1500, loop = FALSE)
                     ),
                     sliderInput(
                       inputId = "samp_size",
@@ -494,7 +502,7 @@ ui <- list(
                       max = 100,
                       value = 10,
                       width = 600, 
-                      animate = animationOptions(interval = 100, loop = FALSE)),
+                      animate = animationOptions(interval = 1500, loop = FALSE)),
                     br(),
                     br()
                   )
@@ -737,6 +745,11 @@ ui <- list(
             "Study:  http://onlinelibrary.wiley.com/doi/10.1111/j.1559-1816.2002.tb00216.
             x/abstract."
           ), 
+          p(
+            class = "hangingindent", 
+            "Study:  http://onlinelibrary.wiley.com/doi/10.1111/j.1559-1816.2002.tb00216.
+            x/abstract."
+          ), 
           br(),
           br(),
           br(),
@@ -763,14 +776,33 @@ server <- function(input, output, session) {
   })
 
   #move from Prerequisites to Overview
-  observeEvent(input$next.page, {
-    updateTabItems(session, "pages", "overview")
+  observeEvent(
+    eventExpr = input$next.page, 
+    handlerExpr = {
+      updateTabItems(
+        session = session, 
+        inputId = "pages", 
+        selected = "overview")
   })
 
   #move from Overview to Part 1
-  observeEvent(input$go, {
-    updateTabItems(session, "pages", "prereq")
+  observeEvent(
+    eventExpr = input$go, 
+    handlerExpr = {
+      updateTabItems(
+        session = session, 
+        inputId = "pages", 
+        selected = "prereq")
   })
+  
+  observeEvent(
+    eventExpr = input$go2, 
+    handlerExpr = {
+      updateTabItems(
+        session = session, 
+        inputId = "pages", 
+        selected = "first")
+    })
 
   #create reactive variables for the candy/no candy avg tip percentages
   avg.tip.c = reactive({(input$avgtipc)})
@@ -961,7 +993,7 @@ server <- function(input, output, session) {
 
   #render HTML, call effect()
   output$effect.size = renderUI({
-    HTML(paste0("The effect size is: ",
+    HTML(paste0("The observed effect size is: ",
                 tags$b(avg.c()), tags$b(" % - "),
                 tags$b(avg.nc()), tags$b(" % = "),
                 tags$b(effect()), tags$b( " %"), "."))
@@ -1589,8 +1621,9 @@ server <- function(input, output, session) {
       #invalidates that possibility)
     else if (sum(answers()) == 0) {
       output$feedback = renderUI({
-        "CORRECT"
+        paste0("CORRECT! Play again!")
         
+      })
         #### Correct/Wrong symbols ----
         output$pic1 <- renderIcon(
           icon = ifelse(
@@ -1623,7 +1656,7 @@ server <- function(input, output, session) {
             no = "correct"
           )
         )
-      })
+      
 
       shinyjs::disable("submit")
       shinyjs::showElement("playagain")
@@ -1632,7 +1665,6 @@ server <- function(input, output, session) {
     #CASE 3: There is at least one incorrect answer
     else if (sum(answers()) != 0) {
       output$feedback = renderUI({
-        "Keep Trying!"
         #wrong will eventually be a vector stating which questions are incorrect
           #(we must remove 0s)
         wrong = c()
@@ -1744,9 +1776,9 @@ server <- function(input, output, session) {
   observeEvent(input$playagain, {
     shinyjs::enable("submit")
 
-    # output$feedback = renderUI({
-    #   " "
-    # })
+    output$feedback = renderUI({
+      " "
+    })
 
     shinyjs::hideElement("playagain")
 
@@ -1758,50 +1790,78 @@ server <- function(input, output, session) {
     shinyjs::hideElement("pic4")
   })
   
-  pvalForGraphs = reactive({
+  pval1 <- function(s){
+    #x = input$ef_size, z = input$samp_size, s = zstat()
     #I actually invalidated this condition in the UI by starting the sample size at 10
-    if ((esize() == 0) | (sampsize() == 0)) {
-      return("0.5")
-    }
-    else{
-      pval = 1 - pnorm(abs(zstat()))
-      rpval = round(pval, 4)
-      return(rpval)
-    }
-    
-  })
+    1 - pnorm(abs(s))
+  } 
+
   ### Create Time Plot ----
-  pval1 <- function(x,m,v){
-    1 - pnorm(x, mean = m, sd = sqrt(v))
+  # pval1 <- function(x,z,m,v){
+  #   1 - pnorm(x, z, mean = m, sd = sqrt(v))
+  # }
+  
+  # Function to get p-value
+  pValue <- function(x, n, sdCandy, sdNull){
+    # x will be the difference in means
+    # n will be the total sample size (assuming equal sizes of groups)
+    # sdCandy will be sample standard deviation of the candy treatment group
+    # sdNull will be the sample standard deviation of the null treatment group
+    # Calculate Pooled SD
+    sdPool <- sqrt(((n/2 - 1) * sdCandy^2 + (n/2 - 1) * sdNull^2)/(n - 2))
+    # Calculate t
+    tValue <- x / (sdPool * sqrt(4/n))
+    return(1 - pt(q = tValue, df = (n - 2)))
   }
   
-  
+  # Constants
+  # sample SDs from prompting article https://onlinelibrary-wiley-com.ezaccess.libraries.psu.edu/doi/epdf/10.1111/j.1559-1816.2002.tb00216.x
+  sdCandy <- 3.06
+  sdNull <- 1.89
   observeEvent(
-    eventExpr = c(input$ef_size, pval1, input$samp_size),
+    eventExpr = c(input$ef_size, pval1),
     handlerExpr = {
       output$ef_sizeGraph <- renderPlot(
-
+        # Create plot
         ggplot() +
-          xlim(-4, 4) +
+          xlim(-10, 20) + # Play with these limits-find the best to correspond with diff slider
+          ylim(0, 1) +
           stat_function(
-            fun = pval1,
-            args = list(m = 0, v = 1),
-            color = "blue"
+            fun = pValue,
+            args = list(n = input$samp_size, sdCandy = sdCandy, sdNull = sdNull),
+            color = "blue",
+            size = 1
           ) +
           geom_point(
-            mapping = aes(x = input$ef_size, y = pval1(0,0,1)),
-            color = "red"
+            mapping = aes(
+              x = input$ef_size,
+              y = pValue(
+                x = input$ef_size,
+                n = input$samp_size,
+                sdCandy = sdCandy,
+                sdNull = sdNull
+              )
+            ),
+            color = "red",
+            size = 3
           ) +
-          labs(title = "Effect Size vs. P-Value") +
+          geom_text( # Play around with this and see if we should add or drop this
+            x = 15,
+            y = 0.85,
+            label = paste("Total Sample Size:", input$samp_size)
+          ) +
+          theme_bw() +
+          xlab("Difference in Mean Tip Percentage") +
+          ylab("P-value") +
+          labs(
+            title = "P-value vs. Actual Effect"
+          ) +
+          theme(
+            text = element_text(size = 18) # See Chapter 13, Section 3 of Style Guide
+          )
 
-          theme_bw()+
-          xlab("Effect Size") +
-          ylab("P-Value")
-
-      )}
       )
-           
-  
+  })
 }
 
 # Boast app call ----
